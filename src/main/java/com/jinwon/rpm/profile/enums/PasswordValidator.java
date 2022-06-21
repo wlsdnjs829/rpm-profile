@@ -20,7 +20,7 @@ public enum PasswordValidator implements Validator {
 
     CONSECUTIVE_STRING {
 
-        private static final String REGEX = "0123456789";
+        private static final String REGEX = "abcdefghijklmnopqrstuvwxyz";
 
         @Override
         public boolean run(String target) {
@@ -31,7 +31,7 @@ public enum PasswordValidator implements Validator {
 
     KEYBOARD_FIRST_LINE {
 
-        private static final String REGEX = "0123456789";
+        private static final String REGEX = "qwertyuiop";
 
         @Override
         public boolean run(String target) {
@@ -42,7 +42,7 @@ public enum PasswordValidator implements Validator {
 
     KEYBOARD_SECOND_LINE {
 
-        private static final String REGEX = "0123456789";
+        private static final String REGEX = "asdfghjkl";
 
         @Override
         public boolean run(String target) {
@@ -53,7 +53,7 @@ public enum PasswordValidator implements Validator {
 
     KEYBOARD_THIRD_LINE {
 
-        private static final String REGEX = "0123456789";
+        private static final String REGEX = "zxcvbnm";
 
         @Override
         public boolean run(String target) {
