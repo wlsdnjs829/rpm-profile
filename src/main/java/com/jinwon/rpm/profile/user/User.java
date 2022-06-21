@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jinwon.rpm.profile.base.BaseEntity;
 import com.jinwon.rpm.profile.enums.CountryCode;
+import com.jinwon.rpm.profile.utils.ModelMapperUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -109,6 +110,10 @@ public class User extends BaseEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public static User of(UserDto user) {
+        return ModelMapperUtil.map(user, User.class);
     }
 
 }
