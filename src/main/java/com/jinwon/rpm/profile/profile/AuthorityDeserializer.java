@@ -1,4 +1,4 @@
-package com.jinwon.rpm.profile.user;
+package com.jinwon.rpm.profile.profile;
 
 
 import com.fasterxml.jackson.core.JsonParser;

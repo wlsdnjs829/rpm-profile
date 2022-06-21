@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorMessage {
 
-    NOT_EXIST_USER(HttpStatus.FORBIDDEN, "존재 하지 않는 사용자"),
+    NOT_EXIST_PROFILE(HttpStatus.FORBIDDEN, "존재 하지 않는 프로필"),
     ;
 
     private final HttpStatus httpStatus;
