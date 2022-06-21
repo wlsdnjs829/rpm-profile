@@ -52,7 +52,7 @@ public class ProfileController implements BaseController {
     @PutMapping
     @Operation(description = "프로필 전체 수정")
     public Mono<Profile> putProfile(@NotNull Authentication authentication, @Valid @RequestBody ProfileDto profileDto) {
-        final long userId = getUserIdThrowIfNotExist(authentication);
+        final long userId = getProfileIdThrowIfNotExist(authentication);
         profileDto.userEssentialInfo(userId);
 
         return Mono.just(profileRepository.save(Profile.of(profileDto)));
@@ -61,7 +61,7 @@ public class ProfileController implements BaseController {
     @PatchMapping
     @Operation(description = "프로필 부분 수정")
     public Mono<Profile> patchProfile(@NotNull Authentication authentication, @Valid @RequestBody ProfileDto profileDto) {
-        final long userId = getUserIdThrowIfNotExist(authentication);
+        final long userId = getProfileIdThrowIfNotExist(authentication);
         profileDto.userEssentialInfo(userId);
 
         return Mono.just(profileService.patchUser(profileDto));

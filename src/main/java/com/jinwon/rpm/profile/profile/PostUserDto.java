@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Schema(description = "회원 정보 생성 객체")
+@Schema(description = "프로필 정보 생성 객체")
 public class PostUserDto {
 
     @Email

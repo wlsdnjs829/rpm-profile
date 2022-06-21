@@ -27,11 +27,11 @@ public class TokenRedisComponent {
     private static final String JSON_PARSING_ERROR = "Json Parsing Error";
 
     /**
-     * 토큰 사용자 조회
+     * 토큰 프로필 조회
      *
      * @param token accessToken & refreshToken
      */
-    public Optional<Profile> getTokenUser(String token) {
+    public Optional<Profile> getTokenProfile(String token) {
         final ValueOperations<String, String> values = redisTemplate.opsForValue();
         final String content = values.get(token);
 
@@ -39,11 +39,11 @@ public class TokenRedisComponent {
             return Optional.empty();
         }
 
-        return getUser(content);
+        return getProfile(content);
     }
 
-    /* json 데이터 사용자 정보 변환 */
-    private Optional<Profile> getUser(String content) {
+    /* json 데이터 프로필 정보 변환 */
+    private Optional<Profile> getProfile(String content) {
         try {
             return Optional.of(
                     objectMapper.readValue(content, Profile.class));

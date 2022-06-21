@@ -54,17 +54,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return Optional.empty();
         }
 
-        final Optional<Profile> userOp = tokenRedisComponent.getTokenUser(jwt);
+        final Optional<Profile> profileOp = tokenRedisComponent.getTokenProfile(jwt);
 
-        if (userOp.isEmpty()) {
+        if (profileOp.isEmpty()) {
             return Optional.empty();
         }
 
         final Collection<? extends GrantedAuthority> authorities =
-                userOp.map(Profile::getAuthorities)
+                profileOp.map(Profile::getAuthorities)
                         .orElseGet(Collections::emptyList);
 
-        return Optional.of(new UsernamePasswordAuthenticationToken(userOp, null, authorities));
+        return Optional.of(new UsernamePasswordAuthenticationToken(profileOp, null, authorities));
     }
 
     /* JWT 토큰 조회 */

@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface BaseController {
 
     /**
-     * 회원 정보 반환
+     * 프로필 정보 반환
      *
      * @param authentication 인증 정보
      */
@@ -21,20 +21,11 @@ public interface BaseController {
     }
 
     /**
-     * 유효한 회원 정보 반환
+     * 유효한 프로필 번호 반환
      *
      * @param authentication 인증 정보
      */
-    default Profile getUserThrowIfNotExist(@NotNull Authentication authentication) {
-        return getProfileOp(authentication).orElseThrow(() -> new CustomException(ErrorMessage.NOT_EXIST_PROFILE));
-    }
-
-    /**
-     * 유효한 회원 번호 반환
-     *
-     * @param authentication 인증 정보
-     */
-    default Long getUserIdThrowIfNotExist(@NotNull Authentication authentication) {
+    default Long getProfileIdThrowIfNotExist(@NotNull Authentication authentication) {
         return getProfileOp(authentication).map(Profile::getProfileId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_EXIST_PROFILE));
     }
