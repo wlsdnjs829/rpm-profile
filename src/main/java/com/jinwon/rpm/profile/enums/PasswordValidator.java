@@ -13,7 +13,7 @@ public enum PasswordValidator implements Validator {
 
         @Override
         public boolean run(String target) {
-            return super.run(REGEX, target);
+            return StringUtils.contains(REGEX, target);
         }
 
     },
@@ -24,7 +24,7 @@ public enum PasswordValidator implements Validator {
 
         @Override
         public boolean run(String target) {
-            return super.run(REGEX, target);
+            return StringUtils.contains(REGEX, target);
         }
 
     },
@@ -35,7 +35,7 @@ public enum PasswordValidator implements Validator {
 
         @Override
         public boolean run(String target) {
-            return super.run(REGEX, target);
+            return StringUtils.contains(REGEX, target);
         }
 
     },
@@ -46,7 +46,7 @@ public enum PasswordValidator implements Validator {
 
         @Override
         public boolean run(String target) {
-            return super.run(REGEX, target);
+            return StringUtils.contains(REGEX, target);
         }
 
     },
@@ -57,7 +57,7 @@ public enum PasswordValidator implements Validator {
 
         @Override
         public boolean run(String target) {
-            return super.run(REGEX, target);
+            return StringUtils.contains(REGEX, target);
         }
 
     },
@@ -95,9 +95,5 @@ public enum PasswordValidator implements Validator {
 interface Validator {
 
     boolean run(String target);
-
-    default boolean run(String regex, String target) {
-        return StringUtils.contains(regex, target);
-    }
 
 }
