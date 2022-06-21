@@ -1,6 +1,5 @@
-package com.jinwon.rpm.profile.profile;
+package com.jinwon.rpm.profile.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jinwon.rpm.profile.enums.CountryCode;
 import com.jinwon.rpm.profile.utils.ModelMapperUtil;
@@ -13,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Schema(description = "프로필 정보")
-public class ProfileDto {
+@Schema(description = "회원 정보")
+public class UserDto {
 
-    @JsonIgnore
     @Schema(description = "프로필 번호")
-    private Long profileId;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String userSn;
 
     @Email
     @Schema(description = "이메일", required = true)
@@ -56,16 +55,8 @@ public class ProfileDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final List<String> roles = new ArrayList<>();
 
-    public void postUser() {
-        this.profileName = name;
-    }
-
-    public void userEssentialInfo(Long userId) {
-        this.profileId = userId;
-    }
-
-    public static ProfileDto of(Profile profile) {
-        return ModelMapperUtil.map(profile, ProfileDto.class);
+    public static UserDto of(User user) {
+        return ModelMapperUtil.map(user, UserDto.class);
     }
 
 }

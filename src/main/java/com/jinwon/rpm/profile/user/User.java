@@ -1,4 +1,4 @@
-package com.jinwon.rpm.profile.profile;
+package com.jinwon.rpm.profile.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -24,8 +24,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -37,28 +35,26 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Profile extends BaseEntity implements UserDetails {
+public class User extends BaseEntity implements UserDetails {
 
     @Id
+    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long profileId;
+    private long id;
 
-    @Email
-    @Column(nullable = false, length = 100, unique = true)
+    @Column(nullable = false, length = 100)
     private String email;
 
-    @Email
     @Column(length = 100)
     private String subEmail;
 
-    @Column(length = 100, unique = true)
-    @Pattern(regexp = "^\\d{3}-\\d{3,4}-\\d{4}$")
+    @Column(length = 100)
     private String phone;
 
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(length = 100)
+    @Column(nullable = false, length = 100)
     private String profileName;
 
     @Column(nullable = false, length = 100)
@@ -74,7 +70,7 @@ public class Profile extends BaseEntity implements UserDetails {
 
     @Builder.Default
     @ElementCollection
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "profileId"))
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "user_id"))
     private final List<String> roles = new ArrayList<>();
 
     @JsonDeserialize(using = AuthorityDeserializer.class)
@@ -115,13 +111,8 @@ public class Profile extends BaseEntity implements UserDetails {
         return true;
     }
 
-    public Profile patch(ProfileDto profileDto, Profile profile) {
-        ModelMapperUtil.patchMap(profileDto, profile);
-        return this;
-    }
-
-    public static Profile of(ProfileDto user) {
-        return ModelMapperUtil.map(user, Profile.class);
+    public static User of(UserDto user) {
+        return ModelMapperUtil.map(user, User.class);
     }
 
 }

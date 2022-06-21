@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static void customize(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.
                                           ExpressionInterceptUrlRegistry registry) {
         registry.antMatchers("/api-docs/**", "/health", "/swagger-ui.html",
-                "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**", "/h2-console/**")
+                "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**")
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/")
                 .permitAll()

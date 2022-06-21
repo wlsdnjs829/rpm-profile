@@ -2,7 +2,7 @@ package com.jinwon.rpm.profile.component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jinwon.rpm.profile.profile.Profile;
+import com.jinwon.rpm.profile.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +31,7 @@ public class TokenRedisComponent {
      *
      * @param token accessToken & refreshToken
      */
-    public Optional<Profile> getTokenUser(String token) {
+    public Optional<User> getTokenUser(String token) {
         final ValueOperations<String, String> values = redisTemplate.opsForValue();
         final String content = values.get(token);
 
@@ -43,10 +43,10 @@ public class TokenRedisComponent {
     }
 
     /* json 데이터 사용자 정보 변환 */
-    private Optional<Profile> getUser(String content) {
+    private Optional<User> getUser(String content) {
         try {
             return Optional.of(
-                    objectMapper.readValue(content, Profile.class));
+                    objectMapper.readValue(content, User.class));
         } catch (JsonProcessingException e) {
             log.error(ExceptionUtils.getStackTrace(e));
             log.error(JSON_PARSING_ERROR);
