@@ -10,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
@@ -44,19 +43,19 @@ public class ProfileController implements BaseController {
 
     @PostMapping
     @Operation(description = "프로필 생성")
-    public Mono<Profile> createProfile(@Valid @RequestBody ProfileDto profileDto) {
-        profileDto.postUser();
-        return Mono.just(profileRepository.save(Profile.of(profileDto)));
+    public Mono<Profile> createProfile(@Valid @RequestBody PostProfileDto postProfileDto) {
+        postProfileDto.postProfileThrowIfInvalid();
+        return Mono.just(profileRepository.save(Profile.of(postProfileDto)));
     }
 
-    @PutMapping
-    @Operation(description = "프로필 전체 수정")
-    public Mono<Profile> putProfile(@NotNull Authentication authentication, @Valid @RequestBody ProfileDto profileDto) {
-        final long userId = getProfileIdThrowIfNotExist(authentication);
-        profileDto.userEssentialInfo(userId);
-
-        return Mono.just(profileRepository.save(Profile.of(profileDto)));
-    }
+//    @PutMapping
+//    @Operation(description = "프로필 전체 수정")
+//    public Mono<Profile> putProfile(@NotNull Authentication authentication, @Valid @RequestBody ProfileDto profileDto) {
+//        final long userId = getProfileIdThrowIfNotExist(authentication);
+//        profileDto.userEssentialInfo(userId);
+//
+//        return Mono.just(profileRepository.save(Profile.of(profileDto)));
+//    }
 
     @PatchMapping
     @Operation(description = "프로필 부분 수정")

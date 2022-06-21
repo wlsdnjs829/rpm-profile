@@ -1,13 +1,14 @@
 package com.jinwon.rpm.profile.profile;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jinwon.rpm.profile.constants.RegexPattern;
 import com.jinwon.rpm.profile.enums.CountryCode;
-import com.jinwon.rpm.profile.utils.ModelMapperUtil;
+import com.jinwon.rpm.profile.enums.ErrorMessage;
+import com.jinwon.rpm.profile.exception.CustomException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
@@ -15,16 +16,15 @@ import java.util.List;
 
 @Getter
 @Schema(description = "프로필 정보 생성 객체")
-public class PostUserDto {
+public class PostProfileDto {
 
-    @Email
     @NotNull
+    @Pattern(regexp = RegexPattern.EMAIL_REGEX)
     @Schema(description = "이메일", required = true)
     private String email;
 
     @NotNull
-    @Max(value = 30)
-    @Pattern(regexp = "/[^a-z|A-Z|ㄱ-ㅎ|가-힣]/g")
+    @Pattern(regexp = RegexPattern.NAME_REGEX)
     @Schema(description = "이름", required = true)
     private String name;
 
@@ -50,12 +50,15 @@ public class PostUserDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final List<String> roles = new ArrayList<>();
 
-    public void postUser() {
-        this.profileName = name;
-    }
+    /**
+     * 프로필 생성, 조건에 맞지 않을 시 예외 처리
+     */
+    public void postProfileThrowIfInvalid() {
+        if (!StringUtils.equals(password, reTypePassword)) {
+            throw new CustomException(ErrorMessage.MISMATCH_PASSWORD);
+        }
 
-    public static PostUserDto of(Profile profile) {
-        return ModelMapperUtil.map(profile, PostUserDto.class);
+        this.profileName = name;
     }
 
 }

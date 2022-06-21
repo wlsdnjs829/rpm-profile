@@ -13,10 +13,9 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -38,8 +37,27 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     protected ResponseEntity<ErrorDto> exceptionHandler(Exception e) {
         log.error(ExceptionUtils.getStackTrace(e));
+
         return new ResponseEntity<>(
                 new ErrorDto(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    protected ResponseEntity<ErrorDto> illegalArgumentExceptionHandler(IllegalArgumentException e) {
+        log.error(ExceptionUtils.getStackTrace(e));
+
+        final String message = e.getMessage();
+        final ErrorMessage errorMessage = ErrorMessage.getErrorMessageByName(message);
+
+        if (Objects.isNull(errorMessage)) {
+            return new ResponseEntity<>(
+                    new ErrorDto(HttpStatus.BAD_REQUEST, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+
+        final HttpStatus httpStatus = errorMessage.getHttpStatus();
+
+        return new ResponseEntity<>(
+                new ErrorDto(httpStatus, errorMessage.getMessage()), httpStatus);
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
