@@ -1,5 +1,6 @@
-package com.jinwon.rpm.profile.user;
+package com.jinwon.rpm.profile.profile;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jinwon.rpm.profile.enums.CountryCode;
 import com.jinwon.rpm.profile.utils.ModelMapperUtil;
@@ -7,18 +8,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Schema(description = "회원 정보")
-public class UserDto {
+@Schema(description = "프로필 정보")
+public class ProfileDto {
 
+    @JsonIgnore
     @Schema(description = "프로필 번호")
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String userSn;
+    private Long profileId;
 
     @Email
     @Schema(description = "이메일", required = true)
@@ -56,8 +56,16 @@ public class UserDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final List<String> roles = new ArrayList<>();
 
-    public static UserDto of(User user) {
-        return ModelMapperUtil.map(user, UserDto.class);
+    public void postUser() {
+        this.profileName = name;
+    }
+
+    public void userEssentialInfo(Long userId) {
+        this.profileId = userId;
+    }
+
+    public static ProfileDto of(Profile profile) {
+        return ModelMapperUtil.map(profile, ProfileDto.class);
     }
 
 }

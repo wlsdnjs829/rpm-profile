@@ -3,10 +3,8 @@ package com.jinwon.rpm.profile.config;
 import com.jinwon.rpm.profile.component.TokenRedisComponent;
 import com.jinwon.rpm.profile.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -44,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static void customize(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.
                                           ExpressionInterceptUrlRegistry registry) {
         registry.antMatchers("/api-docs/**", "/health", "/swagger-ui.html",
-                "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**")
+                "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**", "/h2-console/**")
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/")
                 .permitAll()

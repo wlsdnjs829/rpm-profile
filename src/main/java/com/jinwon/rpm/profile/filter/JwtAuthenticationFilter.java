@@ -1,7 +1,7 @@
 package com.jinwon.rpm.profile.filter;
 
 import com.jinwon.rpm.profile.component.TokenRedisComponent;
-import com.jinwon.rpm.profile.user.User;
+import com.jinwon.rpm.profile.profile.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -48,21 +48,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * Authentication Optional 조회, 유효하지 않은 경우 Empty 반환
      *
      * @param jwt accessToken
-     * @param clientIp 사용자 IP
      */
     private Optional<UsernamePasswordAuthenticationToken> getAuthenticationOp(String jwt) {
         if (!StringUtils.hasText(jwt)) {
             return Optional.empty();
         }
 
-        final Optional<User> userOp = tokenRedisComponent.getTokenUser(jwt);
+        final Optional<Profile> userOp = tokenRedisComponent.getTokenUser(jwt);
 
         if (userOp.isEmpty()) {
             return Optional.empty();
         }
 
         final Collection<? extends GrantedAuthority> authorities =
-                userOp.map(User::getAuthorities)
+                userOp.map(Profile::getAuthorities)
                         .orElseGet(Collections::emptyList);
 
         return Optional.of(new UsernamePasswordAuthenticationToken(userOp, null, authorities));
