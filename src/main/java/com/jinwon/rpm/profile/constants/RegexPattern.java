@@ -2,6 +2,8 @@ package com.jinwon.rpm.profile.constants;
 
 import lombok.experimental.UtilityClass;
 
+import java.util.List;
+
 @UtilityClass
 public class RegexPattern {
 
@@ -19,5 +21,9 @@ public class RegexPattern {
     public final String UPPER_CASE_REGEX = ".*[A-Z].*";
 
     public final String ALLOW_CASE_REGEX = "[^0-9a-zA-Z]+";
+
+    public List<String> multiPatterns() {
+        return List.of(NUMBER_REGEX, LOWER_CASE_REGEX, UPPER_CASE_REGEX);
+    }
 
 }
