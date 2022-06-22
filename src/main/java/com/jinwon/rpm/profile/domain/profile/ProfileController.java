@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,11 +44,9 @@ public class ProfileController implements BaseController {
 
     @PostMapping
     @Operation(description = "프로필 생성")
-    public Mono<Profile> createProfile(@Valid @RequestBody PostProfileDto postProfileDto) {
-        postProfileDto.postProfileThrowIfInvalid();
-        postProfileDto.validation();
-        final Profile profile = postProfileDto.toEntity();
-        return Mono.just(profileRepository.save(profile));
+    public Mono<ProfileDto> createProfile(@Valid @RequestBody PostProfileDto postProfileDto) {
+        final Profile profile = profileService.postUser(postProfileDto);
+        return Mono.just(ProfileDto.of(profile));
     }
 
 //    @PutMapping
@@ -61,13 +58,13 @@ public class ProfileController implements BaseController {
 //        return Mono.just(profileRepository.save(Profile.of(profileDto)));
 //    }
 
-    @PatchMapping
-    @Operation(description = "프로필 부분 수정")
-    public Mono<Profile> patchProfile(@NotNull Authentication authentication, @Valid @RequestBody ProfileDto profileDto) {
-        final long userId = getProfileIdThrowIfNotExist(authentication);
-        profileDto.userEssentialInfo(userId);
-
-        return Mono.just(profileService.patchUser(profileDto));
-    }
+//    @PatchMapping
+//    @Operation(description = "프로필 부분 수정")
+//    public Mono<Profile> patchProfile(@NotNull Authentication authentication, @Valid @RequestBody ProfileDto profileDto) {
+//        final long userId = getProfileIdThrowIfNotExist(authentication);
+//        profileDto.userEssentialInfo(userId);
+//
+//        return Mono.just(profileService.patchUser(profileDto));
+//    }
 
 }

@@ -5,11 +5,11 @@ import com.jinwon.rpm.profile.constants.CountryCode;
 import com.jinwon.rpm.profile.constants.ErrorMessage;
 import com.jinwon.rpm.profile.constants.RegexPattern;
 import com.jinwon.rpm.profile.domain.profile.Profile;
-import com.jinwon.rpm.profile.infra.exception.CustomException;
 import com.jinwon.rpm.profile.infra.utils.ModelMapperUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -61,20 +61,11 @@ public class PostProfileDto {
     private final List<String> roles = new ArrayList<>();
 
     /**
-     * 프로필 생성, 조건에 맞지 않을 시 예외 처리
-     */
-    public void postProfileThrowIfInvalid() {
-        if (!StringUtils.equals(password, reTypePassword)) {
-            throw new CustomException(ErrorMessage.MISMATCH_PASSWORD);
-        }
-
-        this.profileName = name;
-    }
-
-    /**
      * 유효성 검사
      */
     public void validation() {
+        Assert.isTrue(StringUtils.equals(password, reTypePassword), ErrorMessage.MISMATCH_PASSWORD.name());
+
         final PasswordDto passwordDto = new PasswordDto(password, email);
         FullPasswordValidator.validator(passwordDto);
 
@@ -92,6 +83,7 @@ public class PostProfileDto {
      * @return 프로필
      */
     public Profile toEntity() {
+        this.profileName = name;
         return ModelMapperUtil.map(this, Profile.class);
     }
 

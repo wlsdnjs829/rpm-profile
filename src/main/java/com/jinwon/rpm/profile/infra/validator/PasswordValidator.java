@@ -66,13 +66,13 @@ public final class PasswordValidator {
             Assert.notNull(password, ErrorMessage.INVALID_PASSWORD.name());
             Assert.notNull(email, ErrorMessage.INVALID_EMAIL.name());
 
-            final PartPasswordValidator partPasswordValidator =
-                    Arrays.stream(PartPasswordValidator.values())
+            final FullPasswordValidator fullPasswordValidator =
+                    Arrays.stream(FullPasswordValidator.values())
                             .filter(Validator::run)
                             .findFirst()
                             .orElse(null);
 
-            Assert.isNull(partPasswordValidator, ErrorMessage.INVALID_PASSWORD.name());
+            Assert.isNull(fullPasswordValidator, ErrorMessage.INVALID_PASSWORD.name());
         }
 
         protected static void updateValidatorInfo(PasswordDto passwordDto) {

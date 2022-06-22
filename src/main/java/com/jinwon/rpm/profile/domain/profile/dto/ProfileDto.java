@@ -7,6 +7,7 @@ import com.jinwon.rpm.profile.domain.profile.Profile;
 import com.jinwon.rpm.profile.infra.utils.ModelMapperUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
@@ -55,15 +56,7 @@ public class ProfileDto {
 
     @Schema(description = "회원 권한")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private final List<String> roles = new ArrayList<>();
-
-    public void postUser() {
-        this.profileName = name;
-    }
-
-    public void userEssentialInfo(Long userId) {
-        this.profileId = userId;
-    }
+    private final List<GrantedAuthority> authorities = new ArrayList<>();
 
     public static ProfileDto of(Profile profile) {
         return ModelMapperUtil.map(profile, ProfileDto.class);

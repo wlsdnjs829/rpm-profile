@@ -8,7 +8,8 @@ import java.util.List;
 public class RegexPattern {
 
     public final String EMAIL_REGEX =
-            "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]{1,64}@[a-zA-Z0-9.-]{1,255}.[a-zA-Z]{2,3}$";
+            "^(?=.{1,64}@)[\\p{L}0-9_-]+(\\.[\\p{L}0-9_-]+)*" +
+                    "@[^-][\\p{L}0-9-]{1,254}+(\\.[\\p{L}0-9-]+)*(\\.[\\p{L}]{2,3})$";
 
     public final String PHONE_REGEX = "^\\d{3}-\\d{3,4}-\\d{4}$";
 

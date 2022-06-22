@@ -1,7 +1,10 @@
 package com.jinwon.rpm.profile.domain.profile;
 
 import com.jinwon.rpm.profile.constants.ErrorMessage;
+import com.jinwon.rpm.profile.constants.RoleType;
+import com.jinwon.rpm.profile.domain.profile.dto.PostProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.ProfileDto;
+import com.jinwon.rpm.profile.domain.role.Role;
 import com.jinwon.rpm.profile.infra.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,24 @@ import javax.validation.constraints.NotNull;
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
+
+    /**
+     * 프로필 생성
+     *
+     * @param postProfileDto 프로필 생성 객체
+     * @return 생성된 프로필 정보
+     */
+    public Profile postUser(@NotNull PostProfileDto postProfileDto) {
+        postProfileDto.validation();
+        final Profile profile = postProfileDto.toEntity();
+
+        final Profile savedProfile = profileRepository.save(profile);
+
+        final Role role = new Role(RoleType.USER);
+        savedProfile.grantRoles(role);
+
+        return savedProfile;
+    }
 
     /**
      * 프로필 부분 수정
