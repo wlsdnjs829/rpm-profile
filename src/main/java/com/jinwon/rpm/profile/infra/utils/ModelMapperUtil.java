@@ -38,6 +38,10 @@ public class ModelMapperUtil {
         return getModelMapper().map(source, t);
     }
 
+    public void putMap(Object source, Object destination) {
+        getModelMapper().map(source, destination);
+    }
+
     public void patchMap(Object source, Object destination) {
         getPatchModelMapper().map(source, destination);
     }

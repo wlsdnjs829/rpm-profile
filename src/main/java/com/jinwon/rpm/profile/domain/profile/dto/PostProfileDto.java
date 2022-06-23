@@ -2,55 +2,29 @@ package com.jinwon.rpm.profile.domain.profile.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jinwon.rpm.profile.constants.CountryCode;
-import com.jinwon.rpm.profile.constants.ErrorMessage;
 import com.jinwon.rpm.profile.constants.RegexPattern;
 import com.jinwon.rpm.profile.domain.profile.Profile;
 import com.jinwon.rpm.profile.infra.utils.ModelMapperUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
-
-import static com.jinwon.rpm.profile.infra.validator.PasswordValidator.FullPasswordValidator;
-import static com.jinwon.rpm.profile.infra.validator.PasswordValidator.PartPasswordValidator;
 
 @Getter
 @Schema(description = "프로필 정보 생성 객체")
-public class PostProfileDto {
-
-    private static final int ZERO = 0;
-    private static final int TWO = 2;
-    private static final int THREE = 3;
-
-    @NotNull
-    @Pattern(regexp = RegexPattern.EMAIL_REGEX)
-    @Schema(description = "이메일", required = true)
-    private String email;
+public class PostProfileDto extends CommonPasswordDto {
 
     @NotNull
     @Pattern(regexp = RegexPattern.NAME_REGEX)
-    @Schema(description = "이름", required = true)
+    @Schema(description = "이름", required = true, example = "이진원")
     private String name;
 
     @Schema(description = "프로필 이름")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String profileName;
-
-    @NotNull
-    @Schema(description = "비밀 번호", required = true)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String password;
-
-    @NotNull
-    @Schema(description = "재입력 비밀 번호", required = true)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String reTypePassword;
 
     @NotNull
     @Schema(description = "국가", required = true)
@@ -59,23 +33,6 @@ public class PostProfileDto {
     @Schema(description = "회원 권한")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final List<String> roles = new ArrayList<>();
-
-    /**
-     * 유효성 검사
-     */
-    public void validation() {
-        Assert.isTrue(StringUtils.equals(password, reTypePassword), ErrorMessage.MISMATCH_PASSWORD.name());
-
-        final PasswordDto passwordDto = new PasswordDto(password, email);
-        FullPasswordValidator.validator(passwordDto);
-
-        IntStream.range(ZERO, password.length() - TWO)
-                .mapToObj(index -> {
-                    final String threeLetters = password.substring(index, index + THREE);
-                    return new PasswordDto(threeLetters);
-                }).forEach(PartPasswordValidator::validator);
-
-    }
 
     /**
      * 프로필 엔티티 변환

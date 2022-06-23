@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jinwon.rpm.profile.constants.CountryCode;
 import com.jinwon.rpm.profile.constants.RegexPattern;
-import com.jinwon.rpm.profile.domain.profile.dto.ProfileDto;
 import com.jinwon.rpm.profile.domain.role.Role;
+import com.jinwon.rpm.profile.infra.converter.EncryptConverter;
+import com.jinwon.rpm.profile.infra.converter.PasswordConverter;
 import com.jinwon.rpm.profile.infra.utils.ModelMapperUtil;
 import com.jinwon.rpm.profile.model.BaseEntity;
 import lombok.AccessLevel;
@@ -17,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -42,16 +44,19 @@ public class Profile extends BaseEntity implements UserDetails {
     private long profileId;
 
     @Pattern(regexp = RegexPattern.EMAIL_REGEX)
+    @Convert(converter = EncryptConverter.class)
     @Column(nullable = false, length = 350, unique = true)
     private String email;
 
     @Email
     @Column(length = 350)
     @Pattern(regexp = RegexPattern.EMAIL_REGEX)
+    @Convert(converter = EncryptConverter.class)
     private String subEmail;
 
     @Column(length = 100, unique = true)
     @Pattern(regexp = RegexPattern.PHONE_REGEX)
+    @Convert(converter = EncryptConverter.class)
     private String phone;
 
     @Column(nullable = false, length = 40)
@@ -66,6 +71,7 @@ public class Profile extends BaseEntity implements UserDetails {
     private String affiliatedCompany;
 
     @Column(nullable = false, length = 100)
+    @Convert(converter = PasswordConverter.class)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
@@ -121,8 +127,13 @@ public class Profile extends BaseEntity implements UserDetails {
         role.grant(this);
     }
 
-    public Profile patch(ProfileDto profileDto, Profile profile) {
-        ModelMapperUtil.patchMap(profileDto, profile);
+    public Profile patch(Object object) {
+        ModelMapperUtil.patchMap(object, this);
+        return this;
+    }
+
+    public Profile put(Object object) {
+        ModelMapperUtil.putMap(object, this);
         return this;
     }
 

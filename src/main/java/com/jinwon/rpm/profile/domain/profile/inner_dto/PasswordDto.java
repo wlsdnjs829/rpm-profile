@@ -1,8 +1,11 @@
-package com.jinwon.rpm.profile.domain.profile.dto;
+package com.jinwon.rpm.profile.domain.profile.inner_dto;
 
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * 패스워드 정보 Dto
+ */
 @Getter
 public class PasswordDto {
 

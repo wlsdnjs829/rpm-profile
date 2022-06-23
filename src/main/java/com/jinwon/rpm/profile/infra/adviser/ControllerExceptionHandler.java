@@ -2,6 +2,7 @@ package com.jinwon.rpm.profile.infra.adviser;
 
 import com.jinwon.rpm.profile.constants.ErrorMessage;
 import com.jinwon.rpm.profile.infra.exception.CustomException;
+import com.jinwon.rpm.profile.infra.exception.EncryptionException;
 import com.jinwon.rpm.profile.model.ErrorDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -20,6 +21,8 @@ import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.SPACE;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 /**
  * 컨트롤러 예외 핸들러
@@ -39,9 +42,28 @@ public class ControllerExceptionHandler {
         log.error(ExceptionUtils.getStackTrace(e));
 
         return new ResponseEntity<>(
-                new ErrorDto(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+                new ErrorDto(INTERNAL_SERVER_ERROR, e.getMessage()), INTERNAL_SERVER_ERROR);
     }
 
+    /**
+     * 암복호화 Exception 예외 처리
+     *
+     * @param e 암복호화 예외
+     * @return 암복호화 값에 다른 공통 예외 반환
+     */
+    @ExceptionHandler(value = EncryptionException.class)
+    protected ResponseEntity<ErrorDto> exceptionHandler(EncryptionException e) {
+        log.error(ExceptionUtils.getStackTrace(e));
+
+        return new ResponseEntity<>(
+                new ErrorDto(INTERNAL_SERVER_ERROR, e.getDefaultMessage()), INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * IllegalArgumentException 예외 처리
+     *
+     * @param e IllegalArgument 예외
+     */
     @ExceptionHandler(value = IllegalArgumentException.class)
     protected ResponseEntity<ErrorDto> illegalArgumentExceptionHandler(IllegalArgumentException e) {
         log.error(ExceptionUtils.getStackTrace(e));
@@ -51,7 +73,7 @@ public class ControllerExceptionHandler {
 
         if (Objects.isNull(errorMessage)) {
             return new ResponseEntity<>(
-                    new ErrorDto(HttpStatus.BAD_REQUEST, e.getMessage()), HttpStatus.BAD_REQUEST);
+                    new ErrorDto(BAD_REQUEST, e.getMessage()), BAD_REQUEST);
         }
 
         final HttpStatus httpStatus = errorMessage.getHttpStatus();
@@ -60,6 +82,11 @@ public class ControllerExceptionHandler {
                 new ErrorDto(httpStatus, errorMessage.name()), httpStatus);
     }
 
+    /**
+     * MethodArgumentNotValidException 예외 처리
+     *
+     * @param e MethodArgumentNotValid 예외
+     */
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     protected ResponseEntity<ErrorDto> notValidArgExceptionHandler(MethodArgumentNotValidException e) {
         log.error(ExceptionUtils.getStackTrace(e));
@@ -80,7 +107,7 @@ public class ControllerExceptionHandler {
                 .orElse(EMPTY);
 
         return new ResponseEntity<>(
-                new ErrorDto(HttpStatus.BAD_REQUEST, field + SPACE + defaultMessage), HttpStatus.BAD_REQUEST);
+                new ErrorDto(BAD_REQUEST, field + SPACE + defaultMessage), BAD_REQUEST);
     }
 
     /**
@@ -97,7 +124,7 @@ public class ControllerExceptionHandler {
                 .map(CustomException::getErrorMessage);
 
         final HttpStatus httpStatus = tokenMessageOp.map(ErrorMessage::getHttpStatus)
-                .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
+                .orElse(INTERNAL_SERVER_ERROR);
 
         final String message = tokenMessageOp.map(Enum::name)
                 .orElse(EMPTY);

@@ -2,7 +2,7 @@ package com.jinwon.rpm.profile.infra.validator;
 
 import com.jinwon.rpm.profile.constants.ErrorMessage;
 import com.jinwon.rpm.profile.constants.RegexPattern;
-import com.jinwon.rpm.profile.domain.profile.dto.PasswordDto;
+import com.jinwon.rpm.profile.domain.profile.inner_dto.PasswordDto;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -17,10 +17,21 @@ public final class PasswordValidator {
     public enum FullPasswordValidator implements Validator {
 
         ALLOW_CASE_REGEX {
+
             @Override
             public boolean run() {
                 final String replacePassword = password.replaceAll(RegexPattern.ALLOW_CASE_REGEX, StringUtils.EMPTY);
                 return !StringUtils.equals(password, replacePassword);
+            }
+
+        },
+
+        LENGTH_REGEX {
+
+            @Override
+            public boolean run() {
+                final int length = password.length();
+                return length < 10 || length > 16;
             }
 
         },

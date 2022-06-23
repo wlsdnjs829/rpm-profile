@@ -13,10 +13,14 @@ import java.util.Arrays;
 public enum ErrorMessage {
 
     NOT_EXIST_PROFILE(HttpStatus.FORBIDDEN, "존재 하지 않는 프로필"),
+    EXIST_EMAIL(HttpStatus.FORBIDDEN, "존재 하는 이메일"),
     INVALID_EMAIL(HttpStatus.BAD_REQUEST, "적합하지 않은 이메일"),
 
     MISMATCH_PASSWORD(HttpStatus.BAD_REQUEST, "패스워드 불일치"),
+    NOT_USE_OLD_PASSWORD(HttpStatus.BAD_REQUEST, "기존 패스워드 사용 불가"),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "적합하지 않은 패스워드"),
+
+    FAIL_POST_WITHDRAW(HttpStatus.INTERNAL_SERVER_ERROR, "회원 탈퇴 사유 생성 실패"),
     ;
 
     private final HttpStatus httpStatus;
