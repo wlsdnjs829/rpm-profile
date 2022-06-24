@@ -1,7 +1,7 @@
 package com.jinwon.rpm.profile.domain.withdraw.inner_dto;
 
 import com.jinwon.rpm.profile.constants.RegexPattern;
-import com.jinwon.rpm.profile.constants.WithdrawType;
+import com.jinwon.rpm.profile.constants.enums.WithdrawType;
 import com.jinwon.rpm.profile.domain.withdraw.Withdraw;
 import com.jinwon.rpm.profile.infra.utils.ModelMapperUtil;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,8 +1,8 @@
 package com.jinwon.rpm.profile.domain.profile;
 
 import com.jinwon.rpm.profile.constants.ErrorMessage;
-import com.jinwon.rpm.profile.constants.RoleType;
-import com.jinwon.rpm.profile.constants.WithdrawType;
+import com.jinwon.rpm.profile.constants.enums.RoleType;
+import com.jinwon.rpm.profile.constants.enums.WithdrawType;
 import com.jinwon.rpm.profile.domain.profile.dto.CommonProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.DeleteProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.PostProfileDto;
@@ -106,8 +106,8 @@ public class ProfileService {
     private PostWithdrawReasonDto postWithdrawReason(DeleteProfileDto deleteProfileDto, Profile profile) {
         final String email = profile.getEmail();
         final String name = profile.getName();
-        final WithdrawType type = deleteProfileDto.getWithdrawType();
-        final String reason = deleteProfileDto.getWithdrawReason();
+        final WithdrawType type = deleteProfileDto.getType();
+        final String reason = deleteProfileDto.getReason();
 
         final PostWithdrawReasonDto postWithdrawReasonDto = new PostWithdrawReasonDto(email, name, type, reason);
 

@@ -21,6 +21,12 @@ public enum ErrorMessage {
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "적합하지 않은 패스워드"),
 
     FAIL_POST_WITHDRAW(HttpStatus.INTERNAL_SERVER_ERROR, "회원 탈퇴 사유 생성 실패"),
+
+    INVALID_TERMS_TYPE(HttpStatus.BAD_REQUEST, "적합하지 않은 약관 타입"),
+    NOT_EXIST_TERMS(HttpStatus.BAD_REQUEST, "존재 하지 않는 약관"),
+    EXIST_TERMS(HttpStatus.BAD_REQUEST, "존재 하는 약관"),
+
+    INVALID_PARAM(HttpStatus.BAD_REQUEST, "적합하지 않은 파라미터"),
     ;
 
     private final HttpStatus httpStatus;

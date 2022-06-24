@@ -1,4 +1,4 @@
-package com.jinwon.rpm.profile.constants;
+package com.jinwon.rpm.profile.constants.enums;
 
 import lombok.Getter;
 

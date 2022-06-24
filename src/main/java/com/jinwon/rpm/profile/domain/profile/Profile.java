@@ -2,8 +2,8 @@ package com.jinwon.rpm.profile.domain.profile;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.jinwon.rpm.profile.constants.CountryCode;
 import com.jinwon.rpm.profile.constants.RegexPattern;
+import com.jinwon.rpm.profile.constants.enums.CountryCode;
 import com.jinwon.rpm.profile.domain.role.Role;
 import com.jinwon.rpm.profile.infra.converter.EncryptConverter;
 import com.jinwon.rpm.profile.infra.converter.PasswordConverter;

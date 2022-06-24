@@ -2,7 +2,7 @@ package com.jinwon.rpm.profile.domain.profile.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.jinwon.rpm.profile.constants.CountryCode;
+import com.jinwon.rpm.profile.constants.enums.CountryCode;
 import com.jinwon.rpm.profile.domain.profile.Profile;
 import com.jinwon.rpm.profile.infra.utils.ModelMapperUtil;
 import io.swagger.v3.oas.annotations.media.Schema;

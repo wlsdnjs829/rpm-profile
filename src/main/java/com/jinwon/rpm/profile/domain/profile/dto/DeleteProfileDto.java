@@ -1,7 +1,7 @@
 package com.jinwon.rpm.profile.domain.profile.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.jinwon.rpm.profile.constants.WithdrawType;
+import com.jinwon.rpm.profile.constants.enums.WithdrawType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
@@ -13,10 +13,10 @@ public class DeleteProfileDto extends CommonProfileDto {
 
     @NotNull
     @Schema(description = "탈퇴 타입")
-    private WithdrawType withdrawType;
+    private WithdrawType type;
 
     @Schema(description = "탈퇴 사유")
-    private String withdrawReason;
+    private String reason;
 
     @NotNull
     @Schema(description = "비밀 번호", required = true, example = "1q2w3e4r5t")

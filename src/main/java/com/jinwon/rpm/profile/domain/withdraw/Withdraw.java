@@ -1,7 +1,7 @@
 package com.jinwon.rpm.profile.domain.withdraw;
 
 import com.jinwon.rpm.profile.constants.RegexPattern;
-import com.jinwon.rpm.profile.constants.WithdrawType;
+import com.jinwon.rpm.profile.constants.enums.WithdrawType;
 import com.jinwon.rpm.profile.infra.converter.EncryptConverter;
 import com.jinwon.rpm.profile.model.BaseEntity;
 import lombok.AccessLevel;

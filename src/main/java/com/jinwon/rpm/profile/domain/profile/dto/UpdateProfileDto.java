@@ -1,6 +1,6 @@
 package com.jinwon.rpm.profile.domain.profile.dto;
 
-import com.jinwon.rpm.profile.constants.CountryCode;
+import com.jinwon.rpm.profile.constants.enums.CountryCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 

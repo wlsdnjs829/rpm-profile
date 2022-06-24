@@ -1,6 +1,6 @@
 package com.jinwon.rpm.profile.domain.role;
 
-import com.jinwon.rpm.profile.constants.RoleType;
+import com.jinwon.rpm.profile.constants.enums.RoleType;
 import com.jinwon.rpm.profile.domain.profile.Profile;
 import com.jinwon.rpm.profile.model.BaseEntity;
 import lombok.AccessLevel;

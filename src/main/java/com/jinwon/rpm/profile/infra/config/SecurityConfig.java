@@ -46,23 +46,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/")
                 .permitAll()
-                // TODO 임시 처리
-                .antMatchers(HttpMethod.GET, "/")
-                .permitAll()
-                // TODO 임시 처리
-                .antMatchers(HttpMethod.PUT, "/")
-                .permitAll()
-                // TODO 임시 처리
-                .antMatchers(HttpMethod.PATCH, "/")
-                .permitAll()
-                // TODO 임시 처리
-                .antMatchers(HttpMethod.DELETE, "/")
-                .permitAll()
-                // TODO 임시 처리
-                .antMatchers(HttpMethod.PATCH, "/password")
-                .permitAll()
                 .anyRequest()
-                .authenticated();
+                // todo 변경 필요
+                .permitAll();
     }
 
 }
