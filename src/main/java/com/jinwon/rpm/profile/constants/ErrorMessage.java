@@ -12,8 +12,8 @@ import java.util.Arrays;
 @Getter
 public enum ErrorMessage {
 
-    NOT_EXIST_PROFILE(HttpStatus.FORBIDDEN, "존재 하지 않는 프로필"),
-    EXIST_EMAIL(HttpStatus.FORBIDDEN, "존재 하는 이메일"),
+    NOT_EXIST_PROFILE(HttpStatus.FORBIDDEN, "존재하지 않는 프로필"),
+    EXIST_EMAIL(HttpStatus.BAD_REQUEST, "존재하는 이메일"),
     INVALID_EMAIL(HttpStatus.BAD_REQUEST, "적합하지 않은 이메일"),
 
     MISMATCH_PASSWORD(HttpStatus.BAD_REQUEST, "패스워드 불일치"),
@@ -22,9 +22,11 @@ public enum ErrorMessage {
 
     FAIL_POST_WITHDRAW(HttpStatus.INTERNAL_SERVER_ERROR, "회원 탈퇴 사유 생성 실패"),
 
+    DONT_MEET_TERMS_OF_CONSENT(HttpStatus.BAD_REQUEST, "동의 조건 미충족"),
     INVALID_TERMS_TYPE(HttpStatus.BAD_REQUEST, "적합하지 않은 약관 타입"),
-    NOT_EXIST_TERMS(HttpStatus.BAD_REQUEST, "존재 하지 않는 약관"),
-    EXIST_TERMS(HttpStatus.BAD_REQUEST, "존재 하는 약관"),
+    NOT_EXIST_TERMS(HttpStatus.BAD_REQUEST, "존재하지 않는 약관"),
+    SAME_AGREE_TYPE(HttpStatus.BAD_REQUEST, "같은 동의 타입"),
+    EXIST_TERMS(HttpStatus.BAD_REQUEST, "존재하는 약관"),
 
     INVALID_PARAM(HttpStatus.BAD_REQUEST, "적합하지 않은 파라미터"),
     ;

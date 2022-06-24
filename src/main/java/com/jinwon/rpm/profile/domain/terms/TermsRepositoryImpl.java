@@ -1,13 +1,14 @@
 package com.jinwon.rpm.profile.domain.terms;
 
+import com.jinwon.rpm.profile.constants.ErrorMessage;
 import com.jinwon.rpm.profile.constants.enums.TermsType;
 import com.jinwon.rpm.profile.constants.enums.UseType;
+import com.jinwon.rpm.profile.infra.exception.CustomException;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.jinwon.rpm.profile.domain.terms.QTerms.terms;
 
@@ -25,7 +26,7 @@ public class TermsRepositoryImpl implements TermsCustomRepository {
     }
 
     @Override
-    public Optional<Terms> findUseTermsByType(TermsType type) {
+    public Terms findUseTermsByType(TermsType type) {
         return jpaQueryFactory.selectFrom(terms)
                 .where(terms.type.eq(type)
                         .and(terms.useType.eq(UseType.USE)))
@@ -33,7 +34,8 @@ public class TermsRepositoryImpl implements TermsCustomRepository {
                 .limit(LIMIT_SIZE)
                 .fetch()
                 .stream()
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_EXIST_TERMS));
     }
 
     @Override

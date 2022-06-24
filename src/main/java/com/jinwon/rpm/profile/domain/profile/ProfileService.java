@@ -2,16 +2,11 @@ package com.jinwon.rpm.profile.domain.profile;
 
 import com.jinwon.rpm.profile.constants.ErrorMessage;
 import com.jinwon.rpm.profile.constants.enums.RoleType;
-import com.jinwon.rpm.profile.constants.enums.WithdrawType;
 import com.jinwon.rpm.profile.domain.profile.dto.CommonProfileDto;
-import com.jinwon.rpm.profile.domain.profile.dto.DeleteProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.PostProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.ProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.UpdateProfilePasswordDto;
 import com.jinwon.rpm.profile.domain.role.Role;
-import com.jinwon.rpm.profile.domain.withdraw.Withdraw;
-import com.jinwon.rpm.profile.domain.withdraw.WithdrawService;
-import com.jinwon.rpm.profile.domain.withdraw.inner_dto.PostWithdrawReasonDto;
 import com.jinwon.rpm.profile.infra.exception.CustomException;
 import com.jinwon.rpm.profile.infra.utils.PasswordEncryptUtil;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +21,6 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class ProfileService {
-
-    private final WithdrawService withdrawService;
 
     private final ProfileRepository profileRepository;
 
@@ -80,40 +73,9 @@ public class ProfileService {
     }
 
     /* 프로필 조회, 없을 시 예외 처리 */
-    private Profile getProfileThrowIfNull(Long profileId) {
+    private Profile getProfileThrowIfNull(@NotNull Long profileId) {
         return profileRepository.findById(profileId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_EXIST_PROFILE));
-    }
-
-    /**
-     * 프로필 삭제
-     *
-     * @param deleteProfileDto 프로필 삭제 DTO
-     * @return 회원 탈퇴 사유
-     */
-    public PostWithdrawReasonDto deleteProfile(@NotNull DeleteProfileDto deleteProfileDto) {
-        final Profile profile = getProfileThrowIfNull(deleteProfileDto.getProfileId());
-
-        final String inputPassword = deleteProfileDto.getPassword();
-        final String encodePassword = profile.getPassword();
-        Assert.isTrue(PasswordEncryptUtil.match(inputPassword, encodePassword), ErrorMessage.MISMATCH_PASSWORD.name());
-
-        profileRepository.delete(profile);
-        return postWithdrawReason(deleteProfileDto, profile);
-    }
-
-    /* 회원 탈퇴 사유 등록 */
-    private PostWithdrawReasonDto postWithdrawReason(DeleteProfileDto deleteProfileDto, Profile profile) {
-        final String email = profile.getEmail();
-        final String name = profile.getName();
-        final WithdrawType type = deleteProfileDto.getType();
-        final String reason = deleteProfileDto.getReason();
-
-        final PostWithdrawReasonDto postWithdrawReasonDto = new PostWithdrawReasonDto(email, name, type, reason);
-
-        final Withdraw withdraw = withdrawService.postWithdrawReason(postWithdrawReasonDto);
-        Assert.notNull(withdraw, ErrorMessage.FAIL_POST_WITHDRAW.name());
-        return postWithdrawReasonDto;
     }
 
     /**

@@ -9,6 +9,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
@@ -46,13 +47,27 @@ public class ControllerExceptionHandler {
     }
 
     /**
+     * 메시지 Readable Exception 예외 처리
+     *
+     * @param e 메시지 Readable 에러
+     * @return 응답 상태 값에 따른 예외 반환
+     */
+    @ExceptionHandler(value = HttpMessageNotReadableException.class)
+    protected ResponseEntity<ErrorDto> messageNotReadableExceptionHandler(HttpMessageNotReadableException e) {
+        log.error(ExceptionUtils.getStackTrace(e));
+
+        return new ResponseEntity<>(
+                new ErrorDto(BAD_REQUEST, e.getMessage()), BAD_REQUEST);
+    }
+
+    /**
      * 암복호화 Exception 예외 처리
      *
      * @param e 암복호화 예외
      * @return 암복호화 값에 다른 공통 예외 반환
      */
     @ExceptionHandler(value = EncryptionException.class)
-    protected ResponseEntity<ErrorDto> exceptionHandler(EncryptionException e) {
+    protected ResponseEntity<ErrorDto> encryptionExceptionHandler(EncryptionException e) {
         log.error(ExceptionUtils.getStackTrace(e));
 
         return new ResponseEntity<>(

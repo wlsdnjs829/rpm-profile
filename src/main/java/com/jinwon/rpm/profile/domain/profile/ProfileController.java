@@ -1,19 +1,16 @@
 package com.jinwon.rpm.profile.domain.profile;
 
 import com.jinwon.rpm.profile.constants.ErrorMessage;
-import com.jinwon.rpm.profile.domain.profile.dto.DeleteProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.PostProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.ProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.UpdateProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.UpdateProfilePasswordDto;
-import com.jinwon.rpm.profile.domain.withdraw.inner_dto.PostWithdrawReasonDto;
 import com.jinwon.rpm.profile.infra.exception.CustomException;
 import com.jinwon.rpm.profile.model.BaseController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +26,7 @@ import java.util.function.Supplier;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "프로필 컨트롤러")
+@Tag(name = "프로필 Controller")
 public class ProfileController implements BaseController {
 
     private final ProfileService profileService;
@@ -37,8 +34,10 @@ public class ProfileController implements BaseController {
 
     //TODO 임시
     @GetMapping
-    @Operation(description = "프로필 조회")
+    @Operation(summary = "프로필 조회")
     public Mono<ProfileDto> getProfile() {
+//        final Long profileId = getProfileIdThrowIfNotExist(authentication);
+        final Long profileId = 1L;
         final Supplier<CustomException> exceptionSupplier = () -> new CustomException(ErrorMessage.NOT_EXIST_PROFILE);
 
         return Optional.of(1L)
@@ -50,7 +49,7 @@ public class ProfileController implements BaseController {
     }
 
 //    @GetMapping
-//    @Operation(description = "프로필 조회")
+//    @Operation(summary = "프로필 조회")
 //    public Mono<ProfileDto> getProfile(@NotNull Authentication authentication) {
 //        final Optional<Profile> profileOp = getProfileOp(authentication);
 //        final Supplier<CustomException> exceptionSupplier = () -> new CustomException(ErrorMessage.NOT_EXIST_PROFILE);
@@ -64,13 +63,13 @@ public class ProfileController implements BaseController {
 //    }
 
     @PostMapping
-    @Operation(description = "프로필 생성")
+    @Operation(summary = "프로필 생성")
     public Mono<ProfileDto> createProfile(@Valid @RequestBody PostProfileDto postProfileDto) {
         return Mono.just(profileService.postProfile(postProfileDto));
     }
 
     @PutMapping
-    @Operation(description = "프로필 전체 수정")
+    @Operation(summary = "프로필 전체 수정")
     public Mono<ProfileDto> putProfile(@NotNull Authentication authentication,
                                        @Valid @RequestBody UpdateProfileDto updateProfileDto) {
 //        final Long profileId = getProfileIdThrowIfNotExist(authentication);
@@ -81,7 +80,7 @@ public class ProfileController implements BaseController {
     }
 
     @PatchMapping
-    @Operation(description = "프로필 부분 수정")
+    @Operation(summary = "프로필 부분 수정")
     public Mono<ProfileDto> patchProfile(@NotNull Authentication authentication,
                                          @Valid @RequestBody UpdateProfileDto updateProfileDto) {
 //        final Long profileId = getProfileIdThrowIfNotExist(authentication);
@@ -91,19 +90,8 @@ public class ProfileController implements BaseController {
         return Mono.just(profileService.patchProfile(updateProfileDto));
     }
 
-    @DeleteMapping
-    @Operation(description = "프로필 삭제")
-    public Mono<PostWithdrawReasonDto> deleteProfile(@NotNull Authentication authentication,
-                                                     @Valid @RequestBody DeleteProfileDto deleteProfileDto) {
-//        final Long profileId = getProfileIdThrowIfNotExist(authentication);
-        final Long profileId = 1L;
-        deleteProfileDto.userEssentialInfo(profileId);
-
-        return Mono.just(profileService.deleteProfile(deleteProfileDto));
-    }
-
     @PatchMapping(value = "/password")
-    @Operation(description = "패스워드 수정")
+    @Operation(summary = "패스워드 수정")
     public Mono<ProfileDto> putProfilePassword(@NotNull Authentication authentication,
                                                @Valid @RequestBody UpdateProfilePasswordDto updateProfilePasswordDto) {
 //        final Long profileId = getProfileIdThrowIfNotExist(authentication);

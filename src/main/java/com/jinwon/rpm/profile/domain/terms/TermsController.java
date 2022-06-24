@@ -20,26 +20,26 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "약관 컨트롤러")
+@Tag(name = "약관 Controller")
 @RequestMapping(value = "/terms")
 public class TermsController implements BaseController {
 
     private final TermsService termsService;
 
-    @GetMapping( value = "/default")
-    @Operation(description = "기본 약관 조회")
+    @GetMapping(value = "/default")
+    @Operation(summary = "기본 약관 조회")
     public Mono<TermsDefaultDto> getDefaultTerms() {
         return Mono.just(termsService.getDefaultTerms());
     }
 
-    @GetMapping(value = "/{type}}")
-    @Operation(description = "약관 상세 조회")
+    @GetMapping(value = "/{type}")
+    @Operation(summary = "약관 상세 조회")
     public Mono<TermsDetailDto> getTermsDetail(@PathVariable TermsType type) {
         return Mono.just(termsService.getTermsDetail(type));
     }
 
     @PostMapping
-    @Operation(description = "약관 등록")
+    @Operation(summary = "약관 등록")
     public Mono<TermsDetailDto> postTerms(@Valid @RequestBody PostTermsDto postTermsDto) {
         return Mono.just(termsService.postTerms(postTermsDto));
     }

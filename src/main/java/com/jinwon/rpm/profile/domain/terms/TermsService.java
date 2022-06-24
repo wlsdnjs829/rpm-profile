@@ -6,7 +6,6 @@ import com.jinwon.rpm.profile.domain.terms.dto.PostTermsDto;
 import com.jinwon.rpm.profile.domain.terms.dto.TermsDefaultDto;
 import com.jinwon.rpm.profile.domain.terms.dto.TermsDetailDto;
 import com.jinwon.rpm.profile.domain.terms.dto.TermsDto;
-import com.jinwon.rpm.profile.infra.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.stereotype.Service;
@@ -45,9 +44,9 @@ public class TermsService {
      */
     public TermsDetailDto getTermsDetail(@NotNull TermsType type) {
         Assert.notNull(type, ErrorMessage.INVALID_TERMS_TYPE.name());
-        return termsRepositoryImpl.findUseTermsByType(type)
-                .map(TermsDetailDto::of)
-                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_EXIST_TERMS));
+
+        final Terms terms = termsRepositoryImpl.findUseTermsByType(type);
+        return TermsDetailDto.of(terms);
     }
 
     /**
