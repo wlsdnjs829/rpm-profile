@@ -58,7 +58,7 @@ public class CommonPasswordDto extends CommonProfileDto {
      * 유저 필수 정보 저장
      *
      * @param profileId 프로필 ID
-     * @param email 이메일
+     * @param email     이메일
      */
     public void userEssentialInfo(Long profileId, String email) {
         Assert.notNull(email, ErrorMessage.EXIST_EMAIL.name());

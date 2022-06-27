@@ -28,7 +28,7 @@ public class PasswordEncryptUtil {
     /**
      * 일치 여부 조회
      *
-     * @param inputPassword 입력받은 패스워드
+     * @param inputPassword  입력받은 패스워드
      * @param encodePassword 인코딩 패스워드
      * @return 일치 여부
      */

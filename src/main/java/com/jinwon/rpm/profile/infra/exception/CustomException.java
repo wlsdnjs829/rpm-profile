@@ -6,9 +6,8 @@ import lombok.Getter;
 
 /**
  * 커스텀 Exception
- *
+ * <p>
  * Enum::name / Enum::code / Enum::status
- *
  */
 @Getter
 @AllArgsConstructor

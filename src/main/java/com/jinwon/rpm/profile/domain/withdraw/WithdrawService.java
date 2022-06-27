@@ -26,7 +26,7 @@ public class WithdrawService {
      * 프로필 탈퇴 사유 등록
      *
      * @param deleteProfileDto 삭제 대상 DTO
-     * @param profile 프로필 정보
+     * @param profile          프로필 정보
      * @return 프로필 탈퇴 사유
      */
     public PostWithdrawReasonDto postWithdrawReason(DeleteProfileDto deleteProfileDto, Profile profile) {
