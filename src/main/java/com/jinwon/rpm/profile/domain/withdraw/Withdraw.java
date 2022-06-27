@@ -34,7 +34,7 @@ public class Withdraw extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long withdrawId;
+    private Long withdrawId;
 
     @Column(nullable = false, length = 350)
     @Pattern(regexp = RegexPattern.EMAIL_REGEX)

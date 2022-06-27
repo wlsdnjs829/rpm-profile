@@ -1,0 +1,18 @@
+{
+  "properties": [
+    {
+      "name": "cloud.aws.s3.bucket",
+      "type": "java.lang.String",
+      "description": "Description for cloud.aws.s3.bucket."
+    },
+    {
+      "name": "spring.datasource.jdbc-url",
+      "type": "java.lang.String",
+      "description": "Description for spring.datasource.jdbc-url."
+    },
+    {
+      "name": "cloud.aws.s3.common.path",
+      "type": "java.lang.String",
+      "description": "Description for cloud.aws.s3.common.path."
+    }
+  ] }

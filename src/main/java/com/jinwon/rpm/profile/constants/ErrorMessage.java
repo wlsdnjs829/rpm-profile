@@ -29,6 +29,9 @@ public enum ErrorMessage {
     EXIST_TERMS(HttpStatus.BAD_REQUEST, "존재하는 약관"),
 
     INVALID_PARAM(HttpStatus.BAD_REQUEST, "적합하지 않은 파라미터"),
+    INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "적합하지 않은 파일 확장자명"),
+    FAIL_S3_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드 실패"),
+    NOT_EXIST_ATTACH_FILE(HttpStatus.BAD_REQUEST, "존재하지 않는 파일"),
     ;
 
     private final HttpStatus httpStatus;

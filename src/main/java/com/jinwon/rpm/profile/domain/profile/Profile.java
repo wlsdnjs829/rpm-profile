@@ -44,7 +44,7 @@ public class Profile extends BaseEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long profileId;
+    private Long profileId;
 
     @Pattern(regexp = RegexPattern.EMAIL_REGEX)
     @Convert(converter = EncryptConverter.class)

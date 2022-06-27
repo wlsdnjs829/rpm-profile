@@ -22,3 +22,24 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+cloud:
+  aws:
+    stack:
+      auto: false
+    region:
+      static: us-west-1
+    s3:
+      bucket: profile
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
