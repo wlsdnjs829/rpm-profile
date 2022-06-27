@@ -2,11 +2,22 @@ package com.jinwon.rpm.profile.domain.profile;
 
 import com.jinwon.rpm.profile.constants.ErrorMessage;
 import com.jinwon.rpm.profile.constants.enums.RoleType;
+import com.jinwon.rpm.profile.constants.enums.TermsType;
+import com.jinwon.rpm.profile.constants.enums.UseType;
 import com.jinwon.rpm.profile.domain.profile.dto.CommonProfileDto;
+import com.jinwon.rpm.profile.domain.profile.dto.DeleteProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.PostProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.ProfileDto;
+import com.jinwon.rpm.profile.domain.profile.dto.TermsAgreementDto;
 import com.jinwon.rpm.profile.domain.profile.dto.UpdateProfilePasswordDto;
 import com.jinwon.rpm.profile.domain.role.Role;
+import com.jinwon.rpm.profile.domain.terms.Terms;
+import com.jinwon.rpm.profile.domain.terms.TermsService;
+import com.jinwon.rpm.profile.domain.terms.dto.TermsDetailDto;
+import com.jinwon.rpm.profile.domain.terms_agreement.TermsAgreementService;
+import com.jinwon.rpm.profile.domain.terms_agreement.inner_dto.PutTermsAgreementDto;
+import com.jinwon.rpm.profile.domain.withdraw.WithdrawService;
+import com.jinwon.rpm.profile.domain.withdraw.inner_dto.PostWithdrawReasonDto;
 import com.jinwon.rpm.profile.infra.exception.CustomException;
 import com.jinwon.rpm.profile.infra.utils.PasswordEncryptUtil;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +32,10 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class ProfileService {
+
+    private final TermsService termsService;
+    private final WithdrawService withdrawService;
+    private final TermsAgreementService termsAgreementService;
 
     private final ProfileRepository profileRepository;
 
@@ -98,6 +113,65 @@ public class ProfileService {
 
         final Profile patchProfile = profile.patch(updateProfilePasswordDto);
         return ProfileDto.of(patchProfile);
+    }
+
+    /**
+     * 프로필 삭제
+     *
+     * @param deleteProfileDto 프로필 삭제 DTO
+     * @return 회원 탈퇴 사유
+     */
+    public PostWithdrawReasonDto deleteProfile(@NotNull DeleteProfileDto deleteProfileDto) {
+        final Long profileId = deleteProfileDto.getProfileId();
+        final Profile profile = getProfileThrowIfNull(profileId);
+
+        final String inputPassword = deleteProfileDto.getPassword();
+        final String encodePassword = profile.getPassword();
+        Assert.isTrue(PasswordEncryptUtil.match(inputPassword, encodePassword), ErrorMessage.MISMATCH_PASSWORD.name());
+
+        termsAgreementService.deleteByProfile(profile);
+        profileRepository.delete(profile);
+        return withdrawService.postWithdrawReason(deleteProfileDto, profile);
+    }
+
+    /**
+     * 동의 여부 조회
+     *
+     * @param profileId 프로필 아이디
+     * @param type      동의서 타입
+     */
+    public TermsAgreementDto getTermsAgreement(@NotNull Long profileId, @NotNull TermsType type) {
+        Assert.notNull(profileId, ErrorMessage.INVALID_PARAM.name());
+        Assert.notNull(type, ErrorMessage.INVALID_PARAM.name());
+
+        final Profile profile = getProfileThrowIfNull(profileId);
+
+        final Terms terms = termsService.getTermsByType(type);
+        final UseType agreeType = termsAgreementService.getTermsAgreementAgreeType(profile, terms);
+
+        final TermsDetailDto termsDetailDto = TermsDetailDto.of(terms);
+        return new TermsAgreementDto(termsDetailDto, agreeType);
+    }
+
+    /**
+     * 프로필 마케팅 동의 생성 / 수정
+     *
+     * @param profileId 프로필 아이디
+     * @param agreeType 동의 타입
+     * @return 동의한 프로필 DTO
+     */
+    public TermsAgreementDto putMarketingAgreement(@NotNull Long profileId, @NotNull UseType agreeType) {
+        Assert.notNull(profileId, ErrorMessage.INVALID_PARAM.name());
+        Assert.notNull(agreeType, ErrorMessage.INVALID_PARAM.name());
+
+        final Profile profile = getProfileThrowIfNull(profileId);
+        final Terms terms = termsService.getTermsByType(TermsType.RECEIVE_MARKETING_INFO);
+
+        final PutTermsAgreementDto putTermsAgreementDto = new PutTermsAgreementDto(profile, terms);
+        termsAgreementService.putTermsAgreement(putTermsAgreementDto, agreeType);
+
+        final TermsDetailDto termsDetailDto = TermsDetailDto.of(terms);
+        return new TermsAgreementDto(termsDetailDto, agreeType);
     }
 
 }

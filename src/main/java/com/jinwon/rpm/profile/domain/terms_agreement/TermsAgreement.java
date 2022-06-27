@@ -1,9 +1,11 @@
-package com.jinwon.rpm.profile.domain.terms;
+package com.jinwon.rpm.profile.domain.terms_agreement;
 
 import com.jinwon.rpm.profile.constants.ErrorMessage;
 import com.jinwon.rpm.profile.constants.enums.TermsCondition;
 import com.jinwon.rpm.profile.constants.enums.UseType;
 import com.jinwon.rpm.profile.domain.profile.Profile;
+import com.jinwon.rpm.profile.domain.terms.Terms;
+import com.jinwon.rpm.profile.domain.terms_agreement.inner_dto.PutTermsAgreementDto;
 import com.jinwon.rpm.profile.model.BaseEntity;
 import lombok.Getter;
 import org.springframework.util.Assert;
@@ -48,24 +50,45 @@ public class TermsAgreement extends BaseEntity {
     private UseType agreeType;
 
     /**
-     * 동의 약관 생성
+     * 미동의 약관 생성
      *
-     * @param profile   프로필
-     * @param terms     약관
-     * @param agreeType 동의 타입
+     * @param putTermsAgreementDto 약관 동의 생성 / 수정 DTO
      */
-    public static TermsAgreement create(@NotNull Profile profile, @NotNull Terms terms, @NotNull UseType agreeType) {
-        Assert.notNull(profile, ErrorMessage.INVALID_PARAM.name());
-        Assert.notNull(terms, ErrorMessage.INVALID_PARAM.name());
-        Assert.notNull(agreeType, ErrorMessage.INVALID_PARAM.name());
+    public static TermsAgreement disagreeTermsAgreement(@NotNull PutTermsAgreementDto putTermsAgreementDto) {
+        Assert.notNull(putTermsAgreementDto, ErrorMessage.INVALID_PARAM.name());
+
+        final Terms terms = putTermsAgreementDto.terms();
+        final Profile profile = putTermsAgreementDto.profile();
 
         final TermsCondition condition = terms.getCondition();
-        Assert.isTrue(meetTermsOfConsent(condition, agreeType), ErrorMessage.DONT_MEET_TERMS_OF_CONSENT.name());
+        validTermsCondition(condition, UseType.UNUSED);
 
         final TermsAgreement termsAgreement = new TermsAgreement();
         termsAgreement.profile = profile;
         termsAgreement.terms = terms;
-        termsAgreement.agreeType = agreeType;
+        termsAgreement.agreeType = UseType.UNUSED;
+
+        return termsAgreement;
+    }
+
+    /**
+     * 동의 약관 생성
+     *
+     * @param putTermsAgreementDto 약관 동의 생성 / 수정 DTO
+     */
+    public static TermsAgreement agreeTermsAgreement(@NotNull PutTermsAgreementDto putTermsAgreementDto) {
+        Assert.notNull(putTermsAgreementDto, ErrorMessage.INVALID_PARAM.name());
+
+        final Terms terms = putTermsAgreementDto.terms();
+        final Profile profile = putTermsAgreementDto.profile();
+
+        final TermsCondition condition = terms.getCondition();
+        validTermsCondition(condition, UseType.USE);
+
+        final TermsAgreement termsAgreement = new TermsAgreement();
+        termsAgreement.profile = profile;
+        termsAgreement.terms = terms;
+        termsAgreement.agreeType = UseType.USE;
 
         return termsAgreement;
     }
@@ -75,14 +98,18 @@ public class TermsAgreement extends BaseEntity {
      *
      * @param agreeType 동의 타입
      */
-    public void agreeOrNot(@NotNull UseType agreeType) {
+    public void agreeOrNot(UseType agreeType) {
         Assert.notNull(agreeType, ErrorMessage.INVALID_PARAM.name());
         Assert.isTrue(!agreeType.equals(this.agreeType), ErrorMessage.SAME_AGREE_TYPE.name());
 
         final TermsCondition condition = terms.getCondition();
-        Assert.isTrue(meetTermsOfConsent(condition, agreeType), ErrorMessage.DONT_MEET_TERMS_OF_CONSENT.name());
+        validTermsCondition(condition, agreeType);
 
         this.agreeType = agreeType;
+    }
+
+    private static void validTermsCondition(TermsCondition condition, UseType unused) {
+        Assert.isTrue(meetTermsOfConsent(condition, unused), ErrorMessage.DONT_MEET_TERMS_OF_CONSENT.name());
     }
 
     /* 동의 조건 충족 -> 필수 동의서 X OR 동의 */

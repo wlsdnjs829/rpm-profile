@@ -1,6 +1,7 @@
-package com.jinwon.rpm.profile.domain.terms;
+package com.jinwon.rpm.profile.domain.terms_agreement;
 
 import com.jinwon.rpm.profile.domain.profile.Profile;
+import com.jinwon.rpm.profile.domain.terms.Terms;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

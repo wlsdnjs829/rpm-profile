@@ -68,5 +68,15 @@ public class TermsService {
         return TermsDetailDto.of(saveTerms);
     }
 
+    /**
+     * 타입에 맞는 약관 조회
+     *
+     * @param type 약관 타입
+     */
+    public Terms getTermsByType(@NotNull TermsType type) {
+        Assert.notNull(type, ErrorMessage.INVALID_PARAM.name());
+        return termsRepositoryImpl.findUseTermsByType(type);
+    }
+
 }
 

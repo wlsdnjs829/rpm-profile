@@ -1,18 +1,25 @@
 package com.jinwon.rpm.profile.domain.profile;
 
 import com.jinwon.rpm.profile.constants.ErrorMessage;
+import com.jinwon.rpm.profile.constants.enums.TermsType;
+import com.jinwon.rpm.profile.constants.enums.UseType;
+import com.jinwon.rpm.profile.domain.profile.dto.DeleteProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.PostProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.ProfileDto;
+import com.jinwon.rpm.profile.domain.profile.dto.TermsAgreementDto;
 import com.jinwon.rpm.profile.domain.profile.dto.UpdateProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.UpdateProfilePasswordDto;
+import com.jinwon.rpm.profile.domain.withdraw.inner_dto.PostWithdrawReasonDto;
 import com.jinwon.rpm.profile.infra.exception.CustomException;
 import com.jinwon.rpm.profile.model.BaseController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -99,6 +106,39 @@ public class ProfileController implements BaseController {
         updateProfilePasswordDto.userEssentialInfo(profileId, "ljw0829@midasin.com");
 
         return Mono.just(profileService.patchProfilePassword(updateProfilePasswordDto));
+    }
+
+    @DeleteMapping(value = "/withdraw")
+    @Operation(summary = "프로필 삭제")
+    public Mono<PostWithdrawReasonDto> deleteProfile(@NotNull Authentication authentication,
+                                                     @Valid @RequestBody DeleteProfileDto deleteProfileDto) {
+//        final Long profileId = getProfileIdThrowIfNotExist(authentication);
+        final Long profileId = 1L;
+        deleteProfileDto.userEssentialInfo(profileId);
+
+        return Mono.just(profileService.deleteProfile(deleteProfileDto));
+    }
+
+    @GetMapping(value = "/agreement/{type}")
+    @Operation(summary = "프로필 동의서 조회")
+    public Mono<TermsAgreementDto> getProfileAgreement(@NotNull Authentication authentication,
+                                                       @PathVariable TermsType type) {
+//        final Long profileId = getProfileIdThrowIfNotExist(authentication);
+        final Long profileId = 1L;
+        final TermsAgreementDto termsAgreementDto = profileService.getTermsAgreement(profileId, type);
+        return Mono.just(termsAgreementDto);
+    }
+
+    @Operation(summary = "프로필 마케팅 생성/수정")
+    @PutMapping(value = "/agreement/marketing/{agreeType}")
+    public Mono<TermsAgreementDto> putProfileMarketingAgree(@NotNull Authentication authentication,
+                                                            @PathVariable UseType agreeType) {
+//        final Long profileId = getProfileIdThrowIfNotExist(authentication);
+        final Long profileId = 1L;
+        final TermsAgreementDto termsAgreementDto =
+                profileService.putMarketingAgreement(profileId, agreeType);
+
+        return Mono.just(termsAgreementDto);
     }
 
 }

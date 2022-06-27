@@ -6,5 +6,5 @@ import java.util.List;
 
 @Schema(description = "기본 약관 DTO")
 public record TermsDefaultDto(
-        @Schema(description = "약관 리스트") List<TermsDto> termsDtoList) {
+        @Schema(description = "약관 리스트") List<TermsDto> termsDtos) {
 }
