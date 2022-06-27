@@ -11,7 +11,6 @@ import org.modelmapper.internal.util.Assert;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,17 +23,25 @@ public class TermsService {
     private final TermsRepositoryImpl termsRepositoryImpl;
 
     /**
-     * 기본 약관 리스트 조회
+     * 기본 약관 DTO 리스트 조회
      */
-    public TermsDefaultDto getDefaultTerms() {
-        final List<TermsType> termsTypes = TermsType.defaultTerms();
+    public TermsDefaultDto getDefaultTermsDto() {
+        final List<Terms> defaultTerms = getDefaultTerms();
 
-        final List<TermsDto> termsDtoList = termsRepositoryImpl.findListUseTerms(termsTypes)
-                .stream()
-                .map(TermsDto::of)
-                .toList();
+        final List<TermsDto> termsDtoList =
+                defaultTerms.stream()
+                        .map(TermsDto::of)
+                        .toList();
 
         return new TermsDefaultDto(termsDtoList);
+    }
+
+    /**
+     * 기본 약관 리스트 조회
+     */
+    public List<Terms> getDefaultTerms() {
+        final List<TermsType> termsTypes = TermsType.defaultTerms();
+        return termsRepositoryImpl.findListUseTerms(termsTypes);
     }
 
     /**
@@ -42,7 +49,7 @@ public class TermsService {
      *
      * @param type 약관 타입
      */
-    public TermsDetailDto getTermsDetail(@NotNull TermsType type) {
+    public TermsDetailDto getTermsDetail(TermsType type) {
         Assert.notNull(type, ErrorMessage.INVALID_TERMS_TYPE.name());
 
         final Terms terms = termsRepositoryImpl.findUseTermsByType(type);
@@ -55,7 +62,7 @@ public class TermsService {
      * @param postTermsDto 약관 저장 DTO
      * @return 저장된 약관 상세 정보
      */
-    public TermsDetailDto postTerms(@NotNull PostTermsDto postTermsDto) {
+    public TermsDetailDto postTerms(PostTermsDto postTermsDto) {
         Assert.notNull(postTermsDto, ErrorMessage.INVALID_PARAM.name());
 
         final Optional<Terms> existTerms =
@@ -73,7 +80,7 @@ public class TermsService {
      *
      * @param type 약관 타입
      */
-    public Terms getTermsByType(@NotNull TermsType type) {
+    public Terms getTermsByType(TermsType type) {
         Assert.notNull(type, ErrorMessage.INVALID_PARAM.name());
         return termsRepositoryImpl.findUseTermsByType(type);
     }

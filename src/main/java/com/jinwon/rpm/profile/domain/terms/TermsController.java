@@ -29,7 +29,7 @@ public class TermsController implements BaseController {
     @GetMapping(value = "/default")
     @Operation(summary = "기본 약관 조회")
     public Mono<TermsDefaultDto> getDefaultTerms() {
-        return Mono.just(termsService.getDefaultTerms());
+        return Mono.just(termsService.getDefaultTermsDto());
     }
 
     @GetMapping(value = "/{type}")

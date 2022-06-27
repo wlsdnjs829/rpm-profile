@@ -11,7 +11,7 @@ public enum UseType implements TermsAgreementFn {
 
         @Override
         public Function<PutTermsAgreementDto, TermsAgreement> createFunction() {
-            return TermsAgreement::disagreeTermsAgreement;
+            return TermsAgreement::agreeTermsAgreement;
         }
 
     },

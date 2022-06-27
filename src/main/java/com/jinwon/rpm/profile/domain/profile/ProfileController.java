@@ -6,9 +6,9 @@ import com.jinwon.rpm.profile.constants.enums.UseType;
 import com.jinwon.rpm.profile.domain.profile.dto.DeleteProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.PostProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.ProfileDto;
-import com.jinwon.rpm.profile.domain.profile.dto.TermsAgreementDto;
 import com.jinwon.rpm.profile.domain.profile.dto.UpdateProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.UpdateProfilePasswordDto;
+import com.jinwon.rpm.profile.domain.terms_agreement.dto.TermsAgreementDetailDto;
 import com.jinwon.rpm.profile.domain.withdraw.inner_dto.PostWithdrawReasonDto;
 import com.jinwon.rpm.profile.infra.exception.CustomException;
 import com.jinwon.rpm.profile.model.BaseController;
@@ -121,24 +121,24 @@ public class ProfileController implements BaseController {
 
     @GetMapping(value = "/agreement/{type}")
     @Operation(summary = "프로필 동의서 조회")
-    public Mono<TermsAgreementDto> getProfileAgreement(@NotNull Authentication authentication,
-                                                       @PathVariable TermsType type) {
+    public Mono<TermsAgreementDetailDto> getProfileAgreement(@NotNull Authentication authentication,
+                                                             @PathVariable TermsType type) {
 //        final Long profileId = getProfileIdThrowIfNotExist(authentication);
         final Long profileId = 1L;
-        final TermsAgreementDto termsAgreementDto = profileService.getTermsAgreement(profileId, type);
-        return Mono.just(termsAgreementDto);
+        final TermsAgreementDetailDto termsAgreementDetailDto = profileService.getTermsAgreement(profileId, type);
+        return Mono.just(termsAgreementDetailDto);
     }
 
     @Operation(summary = "프로필 마케팅 생성/수정")
     @PutMapping(value = "/agreement/marketing/{agreeType}")
-    public Mono<TermsAgreementDto> putProfileMarketingAgree(@NotNull Authentication authentication,
-                                                            @PathVariable UseType agreeType) {
+    public Mono<TermsAgreementDetailDto> putProfileMarketingAgree(@NotNull Authentication authentication,
+                                                                  @PathVariable UseType agreeType) {
 //        final Long profileId = getProfileIdThrowIfNotExist(authentication);
         final Long profileId = 1L;
-        final TermsAgreementDto termsAgreementDto =
+        final TermsAgreementDetailDto termsAgreementDetailDto =
                 profileService.putMarketingAgreement(profileId, agreeType);
 
-        return Mono.just(termsAgreementDto);
+        return Mono.just(termsAgreementDetailDto);
     }
 
 }

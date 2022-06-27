@@ -108,13 +108,11 @@ public class TermsAgreement extends BaseEntity {
         this.agreeType = agreeType;
     }
 
-    private static void validTermsCondition(TermsCondition condition, UseType unused) {
-        Assert.isTrue(meetTermsOfConsent(condition, unused), ErrorMessage.DONT_MEET_TERMS_OF_CONSENT.name());
-    }
-
     /* 동의 조건 충족 -> 필수 동의서 X OR 동의 */
-    private static boolean meetTermsOfConsent(TermsCondition termsCondition, UseType agreeType) {
-        return !TermsCondition.ESSENTIAL.equals(termsCondition) || UseType.USE.equals(agreeType);
+    private static void validTermsCondition(TermsCondition condition, UseType agreeType) {
+        Assert.isTrue(
+                !TermsCondition.ESSENTIAL.equals(condition) || UseType.USE.equals(agreeType),
+                ErrorMessage.DONT_MEET_TERMS_OF_CONSENT.name());
     }
 
 }
