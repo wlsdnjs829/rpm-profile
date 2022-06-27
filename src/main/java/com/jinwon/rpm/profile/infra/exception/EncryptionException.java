@@ -3,6 +3,9 @@ package com.jinwon.rpm.profile.infra.exception;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * 암복호화 Exception
+ */
 @Getter
 @AllArgsConstructor
 public class EncryptionException extends RuntimeException {

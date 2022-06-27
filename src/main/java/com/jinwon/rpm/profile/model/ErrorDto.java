@@ -6,6 +6,9 @@ import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
+/**
+ * 커스텀 예외 반환 DTO
+ */
 @Getter
 @Schema(description = "예외 핸들러 객체")
 public class ErrorDto {

@@ -14,6 +14,9 @@ import javax.validation.constraints.NotNull;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+/**
+ * 암복호화 유틸
+ */
 @Slf4j
 @UtilityClass
 public class EncryptionUtil {

@@ -20,6 +20,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
+/**
+ * 약관 동의 관련 서비스
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor

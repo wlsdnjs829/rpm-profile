@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.AttributeConverter;
 
+/**
+ * 암복호화 컨버터
+ */
 @Component
 public class EncryptConverter implements AttributeConverter<String, String> {
 

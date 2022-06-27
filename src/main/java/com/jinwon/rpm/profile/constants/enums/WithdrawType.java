@@ -2,6 +2,9 @@ package com.jinwon.rpm.profile.constants.enums;
 
 import lombok.Getter;
 
+/**
+ * 회원 탈퇴 이유 타입
+ */
 @Getter
 public enum WithdrawType {
 

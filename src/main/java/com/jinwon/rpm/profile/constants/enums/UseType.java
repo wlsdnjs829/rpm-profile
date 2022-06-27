@@ -5,6 +5,9 @@ import com.jinwon.rpm.profile.domain.terms_agreement.inner_dto.PutTermsAgreement
 
 import java.util.function.Function;
 
+/**
+ * 사용 타입
+ */
 public enum UseType implements TermsAgreementFn {
 
     USE {
@@ -27,6 +30,9 @@ public enum UseType implements TermsAgreementFn {
 
 }
 
+/**
+ * 약관 동의 펑션
+ */
 interface TermsAgreementFn {
 
     Function<PutTermsAgreementDto, TermsAgreement> createFunction();

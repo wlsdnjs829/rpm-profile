@@ -21,6 +21,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+/**
+ * 권한 Entity
+ */
 @Table(uniqueConstraints = {
         @UniqueConstraint(
                 name = "profile_role_type_unique_001",

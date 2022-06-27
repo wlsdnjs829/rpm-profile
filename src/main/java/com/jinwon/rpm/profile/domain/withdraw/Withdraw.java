@@ -20,6 +20,9 @@ import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
 
+/**
+ * 회원 탈퇴 Entity
+ */
 @Table(indexes = {
         @Index(name = "withdraw_index_001", columnList = "email"),
         @Index(name = "withdraw_index_002", columnList = "type")

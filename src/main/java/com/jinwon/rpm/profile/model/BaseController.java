@@ -8,6 +8,9 @@ import org.springframework.security.core.Authentication;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
+/**
+ * 기본 컨트롤러, 유저 & 세션 등 공통 관리 로직 추가
+ */
 public interface BaseController {
 
     /**

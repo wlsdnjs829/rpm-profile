@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * 프로필 Entity
+ */
 @Table
 @Getter
 @Entity
@@ -122,16 +125,33 @@ public class Profile extends BaseEntity implements UserDetails {
         return true;
     }
 
+    /**
+     * 권한 부여
+     *
+     * @param role 권한
+     */
     public void grantRoles(Role role) {
         this.roles.add(role);
         role.grant(this);
     }
 
+    /**
+     * 부분 수정
+     *
+     * @param object 수정할 데이터
+     * @return 부분 수정된 프로필
+     */
     public Profile patch(Object object) {
         ModelMapperUtil.patchMap(object, this);
         return this;
     }
 
+    /**
+     * 전체 수정
+     *
+     * @param object 수정할 데이터
+     * @return 전체 수정된 프로필
+     */
     public Profile put(Object object) {
         ModelMapperUtil.putMap(object, this);
         return this;

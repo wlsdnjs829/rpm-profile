@@ -12,6 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * 회원 탈퇴 관련 서비스
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor

@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.AttributeConverter;
 
+/**
+ * 패스워드 전용 컨버터
+ */
 @Component
 public class PasswordConverter implements AttributeConverter<String, String> {
 

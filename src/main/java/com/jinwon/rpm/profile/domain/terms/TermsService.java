@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 약관 서비스
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor

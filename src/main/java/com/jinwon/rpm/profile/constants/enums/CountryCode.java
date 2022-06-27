@@ -2,6 +2,9 @@ package com.jinwon.rpm.profile.constants.enums;
 
 import lombok.Getter;
 
+/**
+ * 국가 코드
+ */
 @Getter
 public enum CountryCode {
 

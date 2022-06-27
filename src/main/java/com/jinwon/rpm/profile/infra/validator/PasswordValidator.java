@@ -11,6 +11,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * 패스워드 유효성 체크
+ */
 public final class PasswordValidator {
 
     @Getter

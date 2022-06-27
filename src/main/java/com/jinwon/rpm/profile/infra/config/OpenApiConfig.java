@@ -15,6 +15,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+/**
+ * 오픈 API 설정 (swagger-ui 지원 안 함)
+ */
 @Configuration
 @RequiredArgsConstructor
 public class OpenApiConfig {

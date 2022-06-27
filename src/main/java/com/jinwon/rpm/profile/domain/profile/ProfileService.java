@@ -25,6 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 프로필 서비스
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor

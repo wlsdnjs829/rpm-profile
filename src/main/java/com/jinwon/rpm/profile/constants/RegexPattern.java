@@ -4,6 +4,9 @@ import lombok.experimental.UtilityClass;
 
 import java.util.List;
 
+/**
+ * Regex 패턴 Const
+ */
 @UtilityClass
 public class RegexPattern {
 

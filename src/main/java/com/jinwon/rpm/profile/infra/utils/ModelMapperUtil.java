@@ -7,6 +7,9 @@ import org.modelmapper.convention.MatchingStrategies;
 
 import java.util.Objects;
 
+/**
+ * 매퍼 유틸 (제네릭 사용하여 최대한 한 곳에서 관리)
+ */
 @UtilityClass
 public class ModelMapperUtil {
 

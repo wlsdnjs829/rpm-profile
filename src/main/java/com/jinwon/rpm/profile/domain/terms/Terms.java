@@ -17,6 +17,9 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
 
+/**
+ * 약관 Entity
+ */
 @Getter
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(
