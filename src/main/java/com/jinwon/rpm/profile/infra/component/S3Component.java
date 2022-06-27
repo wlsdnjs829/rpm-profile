@@ -3,8 +3,12 @@ package com.jinwon.rpm.profile.infra.component;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.util.IOUtils;
 import com.jinwon.rpm.profile.constants.ErrorMessage;
 import com.jinwon.rpm.profile.domain.attach_file.inner_dto.AttachFileDto;
 import com.jinwon.rpm.profile.infra.exception.CustomException;
@@ -13,6 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +27,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
+
+import static com.amazonaws.HttpMethod.GET;
 
 /**
  * S3 파일 관리 컴포넌트
@@ -37,6 +48,7 @@ public class S3Component {
 
     private static final String DOT = ".";
     private static final String SLASH = "/";
+    private static final int PRE_SIGNED_EXPIRED_HOUR = 1;
 
     /**
      * 파일 업로드
@@ -106,5 +118,58 @@ public class S3Component {
             throw new CustomException(ErrorMessage.INVALID_FILE_EXTENSION);
         }
     }
+
+    /**
+     * 파일 다운로드
+     *
+     * @param filePath 파일 경로
+     * @param fileName 파일 이름
+     * @return 리소스
+     */
+    public Resource downloadFile(String filePath, String fileName) {
+        Assert.notNull(fileName, ErrorMessage.INVALID_PARAM.name());
+        Assert.notNull(filePath, ErrorMessage.INVALID_PARAM.name());
+
+        final S3Object s3Object = amazonS3.getObject(new GetObjectRequest(bucket + filePath, fileName));
+
+        final S3ObjectInputStream objectInputStream = s3Object.getObjectContent();
+
+        try {
+            byte[] bytes = IOUtils.toByteArray(objectInputStream);
+            return new ByteArrayResource(bytes);
+        } catch (IOException e) {
+            log.error(ExceptionUtils.getStackTrace(e));
+            throw new CustomException(ErrorMessage.FAIL_S3_UPLOAD);
+        }
+    }
+
+    /**
+     * 서명된 S3 다운로드 Url 제공
+     *
+     * @param filePath 파일 경로
+     * @param fileName 파일 이름
+     */
+    @Async
+    public String getPreSignedUrl(String filePath, String fileName) {
+        Assert.notNull(fileName, ErrorMessage.INVALID_PARAM.name());
+        Assert.notNull(filePath, ErrorMessage.INVALID_PARAM.name());
+
+        final String bucketName = bucket + filePath;
+        Assert.isTrue(amazonS3.doesObjectExist(bucketName, fileName), ErrorMessage.NOT_EXIST_ATTACH_FILE.name());
+
+        return generateGetUrl(filePath, fileName);
+    }
+
+    /* S3 pre-signed-url 생성 */
+    private String generateGetUrl(String filePath, String fileName) {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.HOUR, PRE_SIGNED_EXPIRED_HOUR);
+
+        final Date expiredTime = calendar.getTime();
+
+        return amazonS3.generatePresignedUrl(bucket + filePath, fileName, expiredTime, GET).toString();
+    }
+
 
 }

@@ -4,6 +4,9 @@ import com.jinwon.rpm.profile.constants.ErrorMessage;
 import com.jinwon.rpm.profile.constants.enums.RoleType;
 import com.jinwon.rpm.profile.constants.enums.TermsType;
 import com.jinwon.rpm.profile.constants.enums.UseType;
+import com.jinwon.rpm.profile.domain.attach_file.AttachFile;
+import com.jinwon.rpm.profile.domain.attach_file.AttachFileService;
+import com.jinwon.rpm.profile.domain.attach_file.inner_dto.AttachFileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.CommonProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.DeleteProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.PostProfileDto;
@@ -21,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +38,7 @@ import java.util.Optional;
 public class ProfileService {
 
     private final WithdrawService withdrawService;
+    private final AttachFileService attachFileService;
     private final TermsAgreementService termsAgreementService;
 
     private final ProfileRepository profileRepository;
@@ -147,6 +152,9 @@ public class ProfileService {
         final String encodePassword = profile.getPassword();
         Assert.isTrue(PasswordEncryptUtil.match(inputPassword, encodePassword), ErrorMessage.MISMATCH_PASSWORD.name());
 
+        final AttachFile attachFile = profile.getAttachFile();
+
+        deleteProfileFile(attachFile);
         termsAgreementService.deleteByProfile(profile);
         profileRepository.delete(profile);
         return withdrawService.postWithdrawReason(deleteProfileDto, profile);
@@ -182,6 +190,50 @@ public class ProfileService {
                 new TermsAgreementDto(profile, TermsType.RECEIVE_MARKETING_INFO, agreeType);
 
         return termsAgreementService.putTermsAgreement(termsAgreementDto);
+    }
+
+    /**
+     * 프로필 파일 첨부
+     *
+     * @param profileId     프로필 ID
+     * @param multipartFile 첨부 파일
+     * @return 첨부한 파일 정보
+     */
+    public AttachFileDto uploadProfileFile(Long profileId, MultipartFile multipartFile) {
+        Assert.notNull(profileId, ErrorMessage.INVALID_PARAM.name());
+        Assert.notNull(multipartFile, ErrorMessage.INVALID_PARAM.name());
+
+        final Profile profile = getProfileThrowIfNull(profileId);
+        final AttachFile existAttachFile = profile.getAttachFile();
+
+        deleteProfileFile(existAttachFile);
+
+        final AttachFile attachFile = attachFileService.uploadFile(multipartFile);
+        profile.attachProfileFile(attachFile);
+        return AttachFileDto.of(attachFile);
+    }
+
+    /* 프로필 파일 삭제 */
+    private void deleteProfileFile(AttachFile existAttachFile) {
+        Optional.ofNullable(existAttachFile)
+                .ifPresent(attachFile -> attachFileService.deleteFile(attachFile.getFileUid()));
+    }
+
+    /**
+     * 프로필 파일 조회
+     *
+     * @param profileId 프로필 ID
+     */
+    public String getProfileFilePreSignedUrl(Long profileId) {
+        Assert.notNull(profileId, ErrorMessage.INVALID_PARAM.name());
+
+        final Profile profile = getProfileThrowIfNull(profileId);
+        final AttachFile existAttachFile = profile.getAttachFile();
+
+        return Optional.ofNullable(existAttachFile)
+                .map(AttachFile::getFileUid)
+                .map(attachFileService::getPreSignedUrl)
+                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_EXIST_ATTACH_FILE));
     }
 
 }

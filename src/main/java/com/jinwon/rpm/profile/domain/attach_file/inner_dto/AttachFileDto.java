@@ -18,4 +18,8 @@ public record AttachFileDto(
         return ModelMapperUtil.map(this, AttachFile.class);
     }
 
+    public static AttachFileDto of(AttachFile attachFile) {
+        return ModelMapperUtil.map(attachFile, AttachFileDto.class);
+    }
+
 }

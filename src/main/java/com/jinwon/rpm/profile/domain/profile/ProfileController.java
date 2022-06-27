@@ -3,6 +3,7 @@ package com.jinwon.rpm.profile.domain.profile;
 import com.jinwon.rpm.profile.constants.ErrorMessage;
 import com.jinwon.rpm.profile.constants.enums.TermsType;
 import com.jinwon.rpm.profile.constants.enums.UseType;
+import com.jinwon.rpm.profile.domain.attach_file.inner_dto.AttachFileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.DeleteProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.PostProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.ProfileDto;
@@ -15,6 +16,7 @@ import com.jinwon.rpm.profile.model.BaseController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +25,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
@@ -139,6 +143,25 @@ public class ProfileController implements BaseController {
                 profileService.putMarketingAgreement(profileId, agreeType);
 
         return Mono.just(termsAgreementDetailDto);
+    }
+
+    @PutMapping(value = "/attach-file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "프로필 첨부 파일 업로드")
+    public Mono<AttachFileDto> putProfileFile(@NotNull Authentication authentication,
+                                              @RequestPart MultipartFile multipartFile) {
+//        final Long profileId = getProfileIdThrowIfNotExist(authentication);
+        final Long profileId = 1L;
+        final AttachFileDto attachFileDto = profileService.uploadProfileFile(profileId, multipartFile);
+        return Mono.just(attachFileDto);
+    }
+
+    @GetMapping(value = "/attach-file/pre-signed-url", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "프로필 첨부 파일 서명 주소 조회")
+    public Mono<String> getProfileFile(@NotNull Authentication authentication) {
+//        final Long profileId = getProfileIdThrowIfNotExist(authentication);
+        final Long profileId = 1L;
+        final String preSignedUrl = profileService.getProfileFilePreSignedUrl(profileId);
+        return Mono.just(preSignedUrl);
     }
 
 }
