@@ -4,8 +4,8 @@ import com.jinwon.rpm.profile.constants.ErrorMessage;
 import com.jinwon.rpm.profile.constants.enums.RoleType;
 import com.jinwon.rpm.profile.constants.enums.TermsType;
 import com.jinwon.rpm.profile.constants.enums.UseType;
-import com.jinwon.rpm.profile.domain.attach_file.AttachFile;
-import com.jinwon.rpm.profile.domain.attach_file.AttachFileService;
+import com.jinwon.rpm.profile.domain.attach_file.ProfileAttachFile;
+import com.jinwon.rpm.profile.domain.attach_file.ProfileAttachFileService;
 import com.jinwon.rpm.profile.domain.attach_file.inner_dto.AttachFileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.CommonProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.DeleteProfileDto;
@@ -38,7 +38,7 @@ import java.util.Optional;
 public class ProfileService {
 
     private final WithdrawService withdrawService;
-    private final AttachFileService attachFileService;
+    private final ProfileAttachFileService profileAttachFileService;
     private final TermsAgreementService termsAgreementService;
 
     private final ProfileRepository profileRepository;
@@ -152,9 +152,7 @@ public class ProfileService {
         final String encodePassword = profile.getPassword();
         Assert.isTrue(PasswordEncryptUtil.match(inputPassword, encodePassword), ErrorMessage.MISMATCH_PASSWORD.name());
 
-        final AttachFile attachFile = profile.getAttachFile();
-
-        deleteProfileFile(attachFile);
+        deleteProfileFile(profile);
         termsAgreementService.deleteByProfile(profile);
         profileRepository.delete(profile);
         return withdrawService.postWithdrawReason(deleteProfileDto, profile);
@@ -204,19 +202,17 @@ public class ProfileService {
         Assert.notNull(multipartFile, ErrorMessage.INVALID_PARAM.name());
 
         final Profile profile = getProfileThrowIfNull(profileId);
-        final AttachFile existAttachFile = profile.getAttachFile();
 
-        deleteProfileFile(existAttachFile);
+        deleteProfileFile(profile);
 
-        final AttachFile attachFile = attachFileService.uploadFile(multipartFile);
-        profile.attachProfileFile(attachFile);
+        final ProfileAttachFile attachFile = profileAttachFileService.uploadFile(multipartFile);
+        attachFile.linkProfile(profile);
         return AttachFileDto.of(attachFile);
     }
 
     /* 프로필 파일 삭제 */
-    private void deleteProfileFile(AttachFile existAttachFile) {
-        Optional.ofNullable(existAttachFile)
-                .ifPresent(attachFile -> attachFileService.deleteFile(attachFile.getFileUid()));
+    private void deleteProfileFile(Profile profile) {
+        profileAttachFileService.deleteProfileFile(profile);
     }
 
     /**
@@ -228,11 +224,9 @@ public class ProfileService {
         Assert.notNull(profileId, ErrorMessage.INVALID_PARAM.name());
 
         final Profile profile = getProfileThrowIfNull(profileId);
-        final AttachFile existAttachFile = profile.getAttachFile();
 
-        return Optional.ofNullable(existAttachFile)
-                .map(AttachFile::getFileUid)
-                .map(attachFileService::getPreSignedUrl)
+        return Optional.of(profile)
+                .map(profileAttachFileService::getPreSignedUrl)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_EXIST_ATTACH_FILE));
     }
 

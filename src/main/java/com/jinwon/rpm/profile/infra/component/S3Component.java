@@ -10,7 +10,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.jinwon.rpm.profile.constants.ErrorMessage;
-import com.jinwon.rpm.profile.domain.attach_file.inner_dto.AttachFileDto;
+import com.jinwon.rpm.profile.domain.attach_file.inner_dto.ProfileAttachFileDto;
 import com.jinwon.rpm.profile.infra.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +56,7 @@ public class S3Component {
      * @param multipartFile 멀티 파일
      * @return 업로드 파일 이름
      */
-    public AttachFileDto uploadFile(MultipartFile multipartFile) {
+    public ProfileAttachFileDto uploadFile(MultipartFile multipartFile) {
         Assert.notNull(multipartFile, ErrorMessage.INVALID_PARAM.name());
 
         final long size = multipartFile.getSize();
@@ -67,7 +67,7 @@ public class S3Component {
         final ObjectMetadata objectMetadata = getObjectMetadata(size, contentType);
         final String dirPath = uploadS3(multipartFile, fileName, objectMetadata);
 
-        return new AttachFileDto(fileName, dirPath, originalFilename, size);
+        return new ProfileAttachFileDto(fileName, dirPath, originalFilename, size);
     }
 
     /* 오브젝트 메타 데이터 조회 */

@@ -1,0 +1,36 @@
+package com.jinwon.rpm.profile.domain.attach_file;
+
+import com.jinwon.rpm.profile.domain.profile.Profile;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+/**
+ * 첨부 파일 조회
+ */
+@Table(uniqueConstraints = @UniqueConstraint(
+        name = "attach_file_unique_constraint_001", columnNames = {"type"}
+))
+@Getter
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class ProfileAttachFile extends AttachFile {
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profile_id", nullable = false,
+            foreignKey = @ForeignKey(name = "attach_file_profile_foreign_key_001"))
+    private Profile profile;
+
+    public void linkProfile(Profile profile) {
+        this.profile = profile;
+    }
+
+}

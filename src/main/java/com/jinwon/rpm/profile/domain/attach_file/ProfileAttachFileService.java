@@ -1,7 +1,9 @@
 package com.jinwon.rpm.profile.domain.attach_file;
 
 import com.jinwon.rpm.profile.constants.ErrorMessage;
-import com.jinwon.rpm.profile.domain.attach_file.inner_dto.AttachFileDto;
+import com.jinwon.rpm.profile.constants.enums.AttachFileType;
+import com.jinwon.rpm.profile.domain.attach_file.inner_dto.ProfileAttachFileDto;
+import com.jinwon.rpm.profile.domain.profile.Profile;
 import com.jinwon.rpm.profile.infra.component.S3Component;
 import com.jinwon.rpm.profile.infra.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AttachFileService {
+public class ProfileAttachFileService {
 
-    private final AttachFileRepository attachFileRepository;
+    private final ProfileAttachFileRepository profileAttachFileRepository;
 
     private final S3Component s3Component;
 
@@ -32,14 +34,14 @@ public class AttachFileService {
      * @param multipartFile 첨부 파일
      * @return 첨부된 파일
      */
-    public AttachFile uploadFile(MultipartFile multipartFile) {
+    public ProfileAttachFile uploadFile(MultipartFile multipartFile) {
         Assert.notNull(multipartFile, ErrorMessage.INVALID_PARAM.name());
 
-        final AttachFileDto attachFileDto = s3Component.uploadFile(multipartFile);
+        final ProfileAttachFileDto attachFileDto = s3Component.uploadFile(multipartFile);
 
         try {
-            final AttachFile attachFile = attachFileDto.toEntity();
-            return attachFileRepository.save(attachFile);
+            final ProfileAttachFile attachFile = attachFileDto.toEntity();
+            return profileAttachFileRepository.save(attachFile);
         } catch (Exception e) {
             log.error(ExceptionUtils.getStackTrace(e));
             s3Component.deleteFile(attachFileDto.filePath(), attachFileDto.fileUid());
@@ -52,14 +54,29 @@ public class AttachFileService {
      *
      * @param fileUid 파일 UID
      */
-    public void deleteFile(String fileUid) {
+    public void deleteProfileFile(String fileUid) {
         Assert.notNull(fileUid, ErrorMessage.INVALID_PARAM.name());
 
-        final AttachFile attachFile = attachFileRepository.findByFileUid(fileUid)
+        final ProfileAttachFile profileAttachFile = profileAttachFileRepository.findByFileUid(fileUid)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_EXIST_ATTACH_FILE));
 
-        s3Component.deleteFile(attachFile.getFilePath(), attachFile.getFileUid());
-        attachFileRepository.delete(attachFile);
+        s3Component.deleteFile(profileAttachFile.getFilePath(), profileAttachFile.getFileUid());
+        profileAttachFileRepository.delete(profileAttachFile);
+    }
+
+    /**
+     * 파일 삭제
+     *
+     * @param profile 프로필
+     */
+    public void deleteProfileFile(Profile profile) {
+        Assert.notNull(profile, ErrorMessage.INVALID_PARAM.name());
+
+        profileAttachFileRepository.findByProfileAndType(profile, AttachFileType.PROFILE)
+                .forEach(deleteAttachFile -> {
+                    s3Component.deleteFile(deleteAttachFile.getFilePath(), deleteAttachFile.getFileUid());
+                    profileAttachFileRepository.delete(deleteAttachFile);
+                });
     }
 
     /**
@@ -71,7 +88,7 @@ public class AttachFileService {
     public Resource downloadFile(String fileUid) {
         Assert.notNull(fileUid, ErrorMessage.INVALID_PARAM.name());
 
-        final AttachFile attachFile = attachFileRepository.findByFileUid(fileUid)
+        final ProfileAttachFile attachFile = profileAttachFileRepository.findByFileUid(fileUid)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_EXIST_ATTACH_FILE));
 
         return s3Component.downloadFile(attachFile.getFilePath(), attachFile.getFileUid());
@@ -82,11 +99,14 @@ public class AttachFileService {
      *
      * @param fileUid 파일 UID
      */
-    public String getPreSignedUrl(String fileUid) {
-        Assert.notNull(fileUid, ErrorMessage.INVALID_PARAM.name());
+    public String getPreSignedUrl(Profile profile) {
+        Assert.notNull(profile, ErrorMessage.INVALID_PARAM.name());
 
-        final AttachFile attachFile = attachFileRepository.findByFileUid(fileUid)
-                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_EXIST_ATTACH_FILE));
+        final ProfileAttachFile attachFile =
+                profileAttachFileRepository.findByProfileAndType(profile, AttachFileType.PROFILE)
+                        .stream()
+                        .findFirst()
+                        .orElseThrow(() -> new CustomException(ErrorMessage.NOT_EXIST_ATTACH_FILE));
 
         return s3Component.getPreSignedUrl(attachFile.getFilePath(), attachFile.getFileUid());
     }

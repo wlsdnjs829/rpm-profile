@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jinwon.rpm.profile.constants.RegexPattern;
 import com.jinwon.rpm.profile.constants.enums.CountryCode;
-import com.jinwon.rpm.profile.domain.attach_file.AttachFile;
 import com.jinwon.rpm.profile.domain.role.Role;
 import com.jinwon.rpm.profile.infra.converter.EncryptConverter;
 import com.jinwon.rpm.profile.infra.converter.PasswordConverter;
@@ -23,12 +22,10 @@ import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
@@ -88,9 +85,6 @@ public class Profile extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Role> roles = new ArrayList<>();
 
-    @OneToOne(mappedBy = "profile", fetch = FetchType.LAZY)
-    private AttachFile attachFile;
-
     @JsonDeserialize(using = AuthorityDeserializer.class)
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -139,15 +133,6 @@ public class Profile extends BaseEntity implements UserDetails {
     public void grantRoles(Role role) {
         this.roles.add(role);
         role.grant(this);
-    }
-
-    /**
-     * 프로필 파일 첨부
-     *
-     * @param attachFile 첨부 파일
-     */
-    public void attachProfileFile(AttachFile attachFile) {
-        this.attachFile = attachFile;
     }
 
     /**

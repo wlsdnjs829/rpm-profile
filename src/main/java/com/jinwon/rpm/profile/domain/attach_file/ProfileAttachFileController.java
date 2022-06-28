@@ -16,20 +16,20 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Tag(name = "첨부파일 Controller")
 @RequestMapping(value = "/attach-file")
-public class AttachFileController implements BaseController {
+public class ProfileAttachFileController implements BaseController {
 
-    private final AttachFileService attachFileService;
+    private final ProfileAttachFileService profileAttachFileService;
 
     @DeleteMapping(value = "/{fileUid}")
     @Operation(summary = "첨부 파일 삭제")
     public Mono<Void> deleteFile(@PathVariable String fileUid) {
-        return Mono.fromRunnable(() -> attachFileService.deleteFile(fileUid));
+        return Mono.fromRunnable(() -> profileAttachFileService.deleteProfileFile(fileUid));
     }
 
     @GetMapping(value = "/{fileUid}")
     @Operation(summary = "첨부 파일 다운로드")
     public Mono<Resource> downloadFile(@PathVariable String fileUid) {
-        return Mono.just(attachFileService.downloadFile(fileUid));
+        return Mono.just(profileAttachFileService.downloadFile(fileUid));
     }
 
 }
