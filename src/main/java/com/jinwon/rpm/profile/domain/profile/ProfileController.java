@@ -3,7 +3,7 @@ package com.jinwon.rpm.profile.domain.profile;
 import com.jinwon.rpm.profile.constants.ErrorMessage;
 import com.jinwon.rpm.profile.constants.enums.TermsType;
 import com.jinwon.rpm.profile.constants.enums.UseType;
-import com.jinwon.rpm.profile.domain.attach_file.inner_dto.AttachFileDto;
+import com.jinwon.rpm.profile.domain.attach_file.inner_dto.ProfileAttachFileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.DeleteProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.PostProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.ProfileDto;
@@ -147,15 +147,15 @@ public class ProfileController implements BaseController {
 
     @PutMapping(value = "/attach-file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "프로필 첨부 파일 업로드")
-    public Mono<AttachFileDto> putProfileFile(@NotNull Authentication authentication,
-                                              @RequestPart MultipartFile multipartFile) {
+    public Mono<ProfileAttachFileDto> putProfileFile(@NotNull Authentication authentication,
+                                                     @RequestPart MultipartFile multipartFile) {
 //        final Long profileId = getProfileIdThrowIfNotExist(authentication);
         final Long profileId = 1L;
-        final AttachFileDto attachFileDto = profileService.uploadProfileFile(profileId, multipartFile);
+        final ProfileAttachFileDto attachFileDto = profileService.uploadProfileFile(profileId, multipartFile);
         return Mono.just(attachFileDto);
     }
 
-    @GetMapping(value = "/attach-file/pre-signed-url", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @GetMapping(value = "/attach-file/pre-signed-url")
     @Operation(summary = "프로필 첨부 파일 서명 주소 조회")
     public Mono<String> getProfileFile(@NotNull Authentication authentication) {
 //        final Long profileId = getProfileIdThrowIfNotExist(authentication);

@@ -10,6 +10,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.jinwon.rpm.profile.constants.ErrorMessage;
+import com.jinwon.rpm.profile.constants.enums.AttachFileType;
 import com.jinwon.rpm.profile.domain.attach_file.inner_dto.ProfileAttachFileDto;
 import com.jinwon.rpm.profile.infra.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,6 @@ import org.modelmapper.internal.util.Assert;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -56,7 +56,8 @@ public class S3Component {
      * @param multipartFile 멀티 파일
      * @return 업로드 파일 이름
      */
-    public ProfileAttachFileDto uploadFile(MultipartFile multipartFile) {
+    public ProfileAttachFileDto uploadFile(MultipartFile multipartFile, AttachFileType type) {
+        Assert.notNull(type, ErrorMessage.INVALID_PARAM.name());
         Assert.notNull(multipartFile, ErrorMessage.INVALID_PARAM.name());
 
         final long size = multipartFile.getSize();
@@ -65,12 +66,12 @@ public class S3Component {
         final String contentType = multipartFile.getContentType();
 
         final ObjectMetadata objectMetadata = getObjectMetadata(size, contentType);
-        final String dirPath = uploadS3(multipartFile, fileName, objectMetadata);
+        final String dirPath = uploadProfileS3(multipartFile, fileName, type, objectMetadata);
 
         return new ProfileAttachFileDto(fileName, dirPath, originalFilename, size);
     }
 
-    /* 오브젝트 메타 데이터 조회 */
+    /* Object 메타 데이터 조회 */
     private ObjectMetadata getObjectMetadata(long size, String contentType) {
         final ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(size);
@@ -78,10 +79,12 @@ public class S3Component {
         return objectMetadata;
     }
 
-    /* S3 파일 업로드 */
-    private String uploadS3(MultipartFile multipartFile, String fileName, ObjectMetadata objectMetadata) {
+    /* S3 프로필 파일 업로드 */
+    private String uploadProfileS3(MultipartFile multipartFile, String fileName,
+                                   AttachFileType type, ObjectMetadata objectMetadata) {
         try (InputStream inputStream = multipartFile.getInputStream()) {
-            final String dirPath = SLASH + LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE);
+            final String formatDate = LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE);
+            final String dirPath = type.getPath() + SLASH + formatDate;
             amazonS3.putObject(new PutObjectRequest(bucket + dirPath, fileName, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
             return dirPath;
@@ -149,7 +152,6 @@ public class S3Component {
      * @param filePath 파일 경로
      * @param fileName 파일 이름
      */
-    @Async
     public String getPreSignedUrl(String filePath, String fileName) {
         Assert.notNull(fileName, ErrorMessage.INVALID_PARAM.name());
         Assert.notNull(filePath, ErrorMessage.INVALID_PARAM.name());

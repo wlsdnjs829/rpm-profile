@@ -6,7 +6,7 @@ import com.jinwon.rpm.profile.constants.enums.TermsType;
 import com.jinwon.rpm.profile.constants.enums.UseType;
 import com.jinwon.rpm.profile.domain.attach_file.ProfileAttachFile;
 import com.jinwon.rpm.profile.domain.attach_file.ProfileAttachFileService;
-import com.jinwon.rpm.profile.domain.attach_file.inner_dto.AttachFileDto;
+import com.jinwon.rpm.profile.domain.attach_file.inner_dto.ProfileAttachFileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.CommonProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.DeleteProfileDto;
 import com.jinwon.rpm.profile.domain.profile.dto.PostProfileDto;
@@ -197,7 +197,7 @@ public class ProfileService {
      * @param multipartFile 첨부 파일
      * @return 첨부한 파일 정보
      */
-    public AttachFileDto uploadProfileFile(Long profileId, MultipartFile multipartFile) {
+    public ProfileAttachFileDto uploadProfileFile(Long profileId, MultipartFile multipartFile) {
         Assert.notNull(profileId, ErrorMessage.INVALID_PARAM.name());
         Assert.notNull(multipartFile, ErrorMessage.INVALID_PARAM.name());
 
@@ -205,9 +205,9 @@ public class ProfileService {
 
         deleteProfileFile(profile);
 
-        final ProfileAttachFile attachFile = profileAttachFileService.uploadFile(multipartFile);
+        final ProfileAttachFile attachFile = profileAttachFileService.uploadProfileFile(multipartFile);
         attachFile.linkProfile(profile);
-        return AttachFileDto.of(attachFile);
+        return ProfileAttachFileDto.of(attachFile);
     }
 
     /* 프로필 파일 삭제 */

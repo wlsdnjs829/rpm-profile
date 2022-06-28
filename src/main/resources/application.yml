@@ -33,9 +33,9 @@ cloud:
     stack:
       auto: false
     region:
-      static: us-west-1
+      static: ap-northeast-2
     s3:
-      bucket: profile
+      bucket: rpm-profile
 
 logging:
   level:

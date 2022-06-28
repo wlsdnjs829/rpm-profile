@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.modelmapper.internal.util.Assert;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,34 +33,19 @@ public class ProfileAttachFileService {
      * @param multipartFile 첨부 파일
      * @return 첨부된 파일
      */
-    public ProfileAttachFile uploadFile(MultipartFile multipartFile) {
+    public ProfileAttachFile uploadProfileFile(MultipartFile multipartFile) {
         Assert.notNull(multipartFile, ErrorMessage.INVALID_PARAM.name());
 
-        final ProfileAttachFileDto attachFileDto = s3Component.uploadFile(multipartFile);
+        final ProfileAttachFileDto attachFileDto = s3Component.uploadFile(multipartFile, AttachFileType.PROFILE);
 
         try {
             final ProfileAttachFile attachFile = attachFileDto.toEntity();
             return profileAttachFileRepository.save(attachFile);
         } catch (Exception e) {
             log.error(ExceptionUtils.getStackTrace(e));
-            s3Component.deleteFile(attachFileDto.filePath(), attachFileDto.fileUid());
+            s3Component.deleteFile(attachFileDto.getFilePath(), attachFileDto.getFileUid());
             throw new CustomException(ErrorMessage.FAIL_S3_UPLOAD);
         }
-    }
-
-    /**
-     * 파일 삭제
-     *
-     * @param fileUid 파일 UID
-     */
-    public void deleteProfileFile(String fileUid) {
-        Assert.notNull(fileUid, ErrorMessage.INVALID_PARAM.name());
-
-        final ProfileAttachFile profileAttachFile = profileAttachFileRepository.findByFileUid(fileUid)
-                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_EXIST_ATTACH_FILE));
-
-        s3Component.deleteFile(profileAttachFile.getFilePath(), profileAttachFile.getFileUid());
-        profileAttachFileRepository.delete(profileAttachFile);
     }
 
     /**
@@ -77,21 +61,6 @@ public class ProfileAttachFileService {
                     s3Component.deleteFile(deleteAttachFile.getFilePath(), deleteAttachFile.getFileUid());
                     profileAttachFileRepository.delete(deleteAttachFile);
                 });
-    }
-
-    /**
-     * 첨부 파일 다운로드
-     *
-     * @param fileUid 파일 UID
-     * @return 리소스
-     */
-    public Resource downloadFile(String fileUid) {
-        Assert.notNull(fileUid, ErrorMessage.INVALID_PARAM.name());
-
-        final ProfileAttachFile attachFile = profileAttachFileRepository.findByFileUid(fileUid)
-                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_EXIST_ATTACH_FILE));
-
-        return s3Component.downloadFile(attachFile.getFilePath(), attachFile.getFileUid());
     }
 
     /**
