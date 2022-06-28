@@ -20,7 +20,7 @@ import javax.persistence.UniqueConstraint;
  * 첨부 파일 조회
  */
 @Table(uniqueConstraints = @UniqueConstraint(
-        name = "attach_file_unique_constraint_001", columnNames = {"type"}
+        name = "profile_attach_file_unique_constraint_001", columnNames = {"type"}
 ))
 @Getter
 @Entity
@@ -33,7 +33,7 @@ public class ProfileAttachFile extends AttachFile {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", nullable = false,
-            foreignKey = @ForeignKey(name = "attach_file_profile_foreign_key_001"))
+            foreignKey = @ForeignKey(name = "profile_attach_file_profile_foreign_key_001"))
     private Profile profile;
 
     public void linkProfile(Profile profile) {
