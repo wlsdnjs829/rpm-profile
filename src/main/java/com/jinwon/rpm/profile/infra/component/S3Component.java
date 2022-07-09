@@ -9,9 +9,9 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
-import com.jinwon.rpm.profile.constants.ErrorMessage;
 import com.jinwon.rpm.profile.constants.enums.AttachFileType;
-import com.jinwon.rpm.profile.domain.attach_file.inner_dto.ProfileAttachFileDto;
+import com.jinwon.rpm.profile.constants.enums.ErrorMessage;
+import com.jinwon.rpm.profile.domain.attach_file.inner_dto.MemberAttachFileDto;
 import com.jinwon.rpm.profile.infra.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +56,7 @@ public class S3Component {
      * @param multipartFile 멀티 파일
      * @return 업로드 파일 이름
      */
-    public ProfileAttachFileDto uploadFile(MultipartFile multipartFile, AttachFileType type) {
+    public MemberAttachFileDto uploadFile(MultipartFile multipartFile, AttachFileType type) {
         Assert.notNull(type, ErrorMessage.INVALID_PARAM.name());
         Assert.notNull(multipartFile, ErrorMessage.INVALID_PARAM.name());
 
@@ -66,9 +66,9 @@ public class S3Component {
         final String contentType = multipartFile.getContentType();
 
         final ObjectMetadata objectMetadata = getObjectMetadata(size, contentType);
-        final String dirPath = uploadProfileS3(multipartFile, fileName, type, objectMetadata);
+        final String dirPath = uploadMemberS3(multipartFile, fileName, type, objectMetadata);
 
-        return new ProfileAttachFileDto(fileName, dirPath, originalFilename, size);
+        return new MemberAttachFileDto(fileName, dirPath, originalFilename, size);
     }
 
     /* Object 메타 데이터 조회 */
@@ -79,9 +79,9 @@ public class S3Component {
         return objectMetadata;
     }
 
-    /* S3 프로필 파일 업로드 */
-    private String uploadProfileS3(MultipartFile multipartFile, String fileName,
-                                   AttachFileType type, ObjectMetadata objectMetadata) {
+    /* S3 사용자 파일 업로드 */
+    private String uploadMemberS3(MultipartFile multipartFile, String fileName,
+                                  AttachFileType type, ObjectMetadata objectMetadata) {
         try (InputStream inputStream = multipartFile.getInputStream()) {
             final String formatDate = LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE);
             final String dirPath = type.getPath() + SLASH + formatDate;

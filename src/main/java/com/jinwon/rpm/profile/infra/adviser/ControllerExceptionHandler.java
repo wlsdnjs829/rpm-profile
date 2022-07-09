@@ -1,6 +1,6 @@
 package com.jinwon.rpm.profile.infra.adviser;
 
-import com.jinwon.rpm.profile.constants.ErrorMessage;
+import com.jinwon.rpm.profile.constants.enums.ErrorMessage;
 import com.jinwon.rpm.profile.infra.exception.CustomException;
 import com.jinwon.rpm.profile.infra.exception.EncryptionException;
 import com.jinwon.rpm.profile.model.ErrorDto;
@@ -32,8 +32,6 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @RestControllerAdvice
 public class ControllerExceptionHandler {
 
-    private static final String DEFAULT_CODE = "E999";
-
     /**
      * 잡지 않은 모든 Exception 예외 처리
      *
@@ -45,7 +43,7 @@ public class ControllerExceptionHandler {
         log.error(ExceptionUtils.getStackTrace(e));
 
         return new ResponseEntity<>(
-                new ErrorDto(INTERNAL_SERVER_ERROR, DEFAULT_CODE, e.getMessage()), INTERNAL_SERVER_ERROR);
+                new ErrorDto(INTERNAL_SERVER_ERROR, e.getMessage()), INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -59,7 +57,7 @@ public class ControllerExceptionHandler {
         log.error(ExceptionUtils.getStackTrace(e));
 
         return new ResponseEntity<>(
-                new ErrorDto(BAD_REQUEST, DEFAULT_CODE, e.getMessage()), BAD_REQUEST);
+                new ErrorDto(BAD_REQUEST, e.getMessage()), BAD_REQUEST);
     }
 
     /**
@@ -73,7 +71,7 @@ public class ControllerExceptionHandler {
         log.error(ExceptionUtils.getStackTrace(e));
 
         return new ResponseEntity<>(
-                new ErrorDto(INTERNAL_SERVER_ERROR, DEFAULT_CODE, e.getDefaultMessage()), INTERNAL_SERVER_ERROR);
+                new ErrorDto(INTERNAL_SERVER_ERROR, e.getDefaultMessage()), INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -90,13 +88,13 @@ public class ControllerExceptionHandler {
 
         if (Objects.isNull(errorMessage)) {
             return new ResponseEntity<>(
-                    new ErrorDto(BAD_REQUEST, DEFAULT_CODE, e.getMessage()), BAD_REQUEST);
+                    new ErrorDto(BAD_REQUEST, e.getMessage()), BAD_REQUEST);
         }
 
         final HttpStatus httpStatus = errorMessage.getHttpStatus();
 
         return new ResponseEntity<>(
-                new ErrorDto(httpStatus, errorMessage.getCode(), errorMessage.name()), httpStatus);
+                new ErrorDto(httpStatus, errorMessage.name()), httpStatus);
     }
 
     /**
@@ -124,7 +122,7 @@ public class ControllerExceptionHandler {
                 .orElse(EMPTY);
 
         return new ResponseEntity<>(
-                new ErrorDto(BAD_REQUEST, DEFAULT_CODE, field + SPACE + defaultMessage), BAD_REQUEST);
+                new ErrorDto(BAD_REQUEST, field + SPACE + defaultMessage), BAD_REQUEST);
     }
 
     /**
@@ -146,11 +144,8 @@ public class ControllerExceptionHandler {
         final String message = tokenMessageOp.map(Enum::name)
                 .orElse(EMPTY);
 
-        final String code = tokenMessageOp.map(ErrorMessage::getCode)
-                .orElse(EMPTY);
-
         return new ResponseEntity<>(
-                new ErrorDto(httpStatus, code, message), httpStatus);
+                new ErrorDto(httpStatus,  message), httpStatus);
     }
 
 }

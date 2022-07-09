@@ -37,7 +37,7 @@ public class Terms extends BaseEntity {
 
     @Column(nullable = false, length = 15)
     @Enumerated(value = EnumType.STRING)
-    private TermsCondition condition;
+    private TermsCondition termsCondition;
 
     @Column(nullable = false)
     private String title;

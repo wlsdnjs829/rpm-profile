@@ -1,6 +1,6 @@
 package com.jinwon.rpm.profile.infra.exception;
 
-import com.jinwon.rpm.profile.constants.ErrorMessage;
+import com.jinwon.rpm.profile.constants.enums.ErrorMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

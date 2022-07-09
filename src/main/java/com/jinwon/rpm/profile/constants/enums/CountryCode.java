@@ -1,11 +1,10 @@
 package com.jinwon.rpm.profile.constants.enums;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
-/**
- * 국가 코드
- */
 @Getter
+@Schema(description = "국가 코드", enumAsRef = true)
 public enum CountryCode {
 
     AF("Afghanistan"),

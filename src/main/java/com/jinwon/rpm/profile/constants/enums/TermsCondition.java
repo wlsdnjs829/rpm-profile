@@ -1,8 +1,8 @@
 package com.jinwon.rpm.profile.constants.enums;
 
-/**
- * 약관 종류
- */
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "약관 종류", enumAsRef = true)
 public enum TermsCondition {
 
     /* 필수 */

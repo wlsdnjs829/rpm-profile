@@ -1,6 +1,6 @@
 package com.jinwon.rpm.profile.domain.terms;
 
-import com.jinwon.rpm.profile.constants.ErrorMessage;
+import com.jinwon.rpm.profile.constants.enums.ErrorMessage;
 import com.jinwon.rpm.profile.constants.enums.TermsType;
 import com.jinwon.rpm.profile.constants.enums.UseType;
 import com.jinwon.rpm.profile.infra.exception.CustomException;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.jinwon.rpm.profile.domain.terms.QTerms.terms;
+import static com.midasit.rpm.member.domain.terms.QTerms.terms;
 
 /**
  * 약관 RepositoryImpl

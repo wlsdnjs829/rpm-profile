@@ -1,11 +1,12 @@
 package com.jinwon.rpm.profile.domain.terms_agreement;
 
-import com.jinwon.rpm.profile.constants.ErrorMessage;
+import com.jinwon.rpm.profile.constants.enums.ErrorMessage;
 import com.jinwon.rpm.profile.constants.enums.TermsCondition;
 import com.jinwon.rpm.profile.constants.enums.UseType;
-import com.jinwon.rpm.profile.domain.profile.Profile;
+import com.jinwon.rpm.profile.domain.member.Member;
 import com.jinwon.rpm.profile.domain.terms.Terms;
 import com.jinwon.rpm.profile.domain.terms_agreement.inner_dto.PutTermsAgreementDto;
+import com.jinwon.rpm.profile.infra.utils.AssertUtil;
 import com.jinwon.rpm.profile.model.BaseEntity;
 import lombok.Getter;
 import org.springframework.util.Assert;
@@ -28,9 +29,9 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Getter
-@Table(uniqueConstraints = @UniqueConstraint(
-        name = "terms_agreement_unique_constraint_001", columnNames = {"profile_id", "terms_id"})
-)
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "terms_agreement_unique_001", columnNames = {"member_id", "terms_id"}),
+})
 public class TermsAgreement extends BaseEntity {
 
     @Id
@@ -39,11 +40,11 @@ public class TermsAgreement extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
-            name = "profile_id", nullable = false, foreignKey = @ForeignKey(name = "terms_agreement_foreign_key_001"))
-    private Profile profile;
+            name = "member_id", nullable = false, foreignKey = @ForeignKey(name = "terms_agreement_foreign_key_001"))
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "terms_id", nullable = false)
+    @JoinColumn(name = "terms_id", nullable = false, foreignKey = @ForeignKey(name = "terms_agreement_foreign_key_002"))
     private Terms terms;
 
     @Column(nullable = false)
@@ -58,13 +59,13 @@ public class TermsAgreement extends BaseEntity {
         Assert.notNull(putTermsAgreementDto, ErrorMessage.INVALID_PARAM.name());
 
         final Terms terms = putTermsAgreementDto.terms();
-        final Profile profile = putTermsAgreementDto.profile();
+        final Member member = putTermsAgreementDto.member();
 
-        final TermsCondition condition = terms.getCondition();
+        final TermsCondition condition = terms.getTermsCondition();
         validTermsCondition(condition, UseType.UNUSED);
 
         final TermsAgreement termsAgreement = new TermsAgreement();
-        termsAgreement.profile = profile;
+        termsAgreement.member = member;
         termsAgreement.terms = terms;
         termsAgreement.agreeType = UseType.UNUSED;
 
@@ -80,13 +81,13 @@ public class TermsAgreement extends BaseEntity {
         Assert.notNull(putTermsAgreementDto, ErrorMessage.INVALID_PARAM.name());
 
         final Terms terms = putTermsAgreementDto.terms();
-        final Profile profile = putTermsAgreementDto.profile();
+        final Member member = putTermsAgreementDto.member();
 
-        final TermsCondition condition = terms.getCondition();
+        final TermsCondition condition = terms.getTermsCondition();
         validTermsCondition(condition, UseType.USE);
 
         final TermsAgreement termsAgreement = new TermsAgreement();
-        termsAgreement.profile = profile;
+        termsAgreement.member = member;
         termsAgreement.terms = terms;
         termsAgreement.agreeType = UseType.USE;
 
@@ -100,9 +101,9 @@ public class TermsAgreement extends BaseEntity {
      */
     public void agreeOrNot(UseType agreeType) {
         Assert.notNull(agreeType, ErrorMessage.INVALID_PARAM.name());
-        Assert.isTrue(!agreeType.equals(this.agreeType), ErrorMessage.SAME_AGREE_TYPE.name());
+        AssertUtil.isFalse(agreeType.equals(this.agreeType), ErrorMessage.SAME_AGREE_TYPE.name());
 
-        final TermsCondition condition = terms.getCondition();
+        final TermsCondition condition = terms.getTermsCondition();
         validTermsCondition(condition, agreeType);
 
         this.agreeType = agreeType;

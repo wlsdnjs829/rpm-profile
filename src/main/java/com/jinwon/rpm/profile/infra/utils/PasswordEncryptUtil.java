@@ -1,6 +1,6 @@
 package com.jinwon.rpm.profile.infra.utils;
 
-import com.jinwon.rpm.profile.constants.ErrorMessage;
+import com.jinwon.rpm.profile.constants.enums.ErrorMessage;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;

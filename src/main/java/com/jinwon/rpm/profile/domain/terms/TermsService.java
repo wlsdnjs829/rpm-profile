@@ -1,6 +1,6 @@
 package com.jinwon.rpm.profile.domain.terms;
 
-import com.jinwon.rpm.profile.constants.ErrorMessage;
+import com.jinwon.rpm.profile.constants.enums.ErrorMessage;
 import com.jinwon.rpm.profile.constants.enums.TermsType;
 import com.jinwon.rpm.profile.domain.terms.dto.PostTermsDto;
 import com.jinwon.rpm.profile.domain.terms.dto.TermsDefaultDto;

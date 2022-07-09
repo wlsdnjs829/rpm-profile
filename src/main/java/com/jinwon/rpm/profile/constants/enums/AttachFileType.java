@@ -1,14 +1,13 @@
 package com.jinwon.rpm.profile.constants.enums;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
-/**
- * 첨부 파일 타입
- */
 @Getter
+@Schema(description = "첨부 파일 타입", enumAsRef = true)
 public enum AttachFileType {
 
-    PROFILE("/profile"),
+    MEMBER("/member"),
     ;
 
     private final String path;

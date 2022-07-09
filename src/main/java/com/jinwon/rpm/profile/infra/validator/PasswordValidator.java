@@ -1,8 +1,8 @@
 package com.jinwon.rpm.profile.infra.validator;
 
-import com.jinwon.rpm.profile.constants.ErrorMessage;
 import com.jinwon.rpm.profile.constants.RegexPattern;
-import com.jinwon.rpm.profile.domain.profile.inner_dto.PasswordDto;
+import com.jinwon.rpm.profile.constants.enums.ErrorMessage;
+import com.jinwon.rpm.profile.domain.member.inner_dto.PasswordDto;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;

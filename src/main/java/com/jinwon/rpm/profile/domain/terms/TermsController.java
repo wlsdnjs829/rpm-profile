@@ -14,34 +14,33 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
+@Tag(name = "약관")
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "약관 Controller")
-@RequestMapping(value = "/terms")
+@RequestMapping(value = BaseController.PATH_V1 + "/terms")
 public class TermsController implements BaseController {
 
     private final TermsService termsService;
 
     @GetMapping(value = "/default")
     @Operation(summary = "기본 약관 조회")
-    public Mono<TermsDefaultDto> getDefaultTerms() {
-        return Mono.just(termsService.getDefaultTermsDto());
+    public TermsDefaultDto getDefaultTerms() {
+        return termsService.getDefaultTermsDto();
     }
 
     @GetMapping(value = "/{type}")
     @Operation(summary = "약관 상세 조회")
-    public Mono<TermsDetailDto> getTermsDetail(@PathVariable TermsType type) {
-        return Mono.just(termsService.getTermsDetail(type));
+    public TermsDetailDto getTermsDetail(@PathVariable TermsType type) {
+        return termsService.getTermsDetail(type);
     }
 
     @PostMapping
     @Operation(summary = "약관 등록")
-    public Mono<TermsDetailDto> postTerms(@Valid @RequestBody PostTermsDto postTermsDto) {
-        return Mono.just(termsService.postTerms(postTermsDto));
+    public TermsDetailDto postTerms(@Valid @RequestBody PostTermsDto postTermsDto) {
+        return termsService.postTerms(postTermsDto);
     }
 
 }

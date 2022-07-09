@@ -1,11 +1,10 @@
 package com.jinwon.rpm.profile.constants.enums;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
-/**
- * 회원 탈퇴 이유 타입
- */
 @Getter
+@Schema(description = "사용자 탈퇴 이유 타입", enumAsRef = true)
 public enum WithdrawType {
 
     /* 불 필요한 서비스 */

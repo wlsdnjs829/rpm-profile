@@ -1,8 +1,10 @@
 package com.jinwon.rpm.profile.infra.config;
 
 import com.jinwon.rpm.profile.infra.component.TokenRedisComponent;
-import com.jinwon.rpm.profile.infra.filter.JwtAuthenticationFilter;
+import com.jinwon.rpm.profile.infra.config.jwt.JwtAuthenticationFilter;
+import com.jinwon.rpm.profile.infra.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,6 +15,9 @@ import org.springframework.security.config.annotation.web.configurers.Expression
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
  * 시큐리티 설정
@@ -22,11 +27,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final JwtTokenProvider jwtTokenProvider;
     private final TokenRedisComponent tokenRedisComponent;
+
+    private static final String WILD_CARD = "*";
+    private static final String WILD_PATTERN = "/**";
 
     @Override
     protected void configure(HttpSecurity security) throws Exception {
         security
+                .cors()
+                .and()
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(HeadersConfigurer::frameOptions)
                 .headers(HeadersConfigurer::disable)
@@ -35,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
                 .addFilterBefore(
-                        new JwtAuthenticationFilter(tokenRedisComponent),
+                        new JwtAuthenticationFilter(jwtTokenProvider, tokenRedisComponent),
                         UsernamePasswordAuthenticationFilter.class);
     }
 
@@ -44,11 +55,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         registry.antMatchers("/api-docs/**", "/health", "/swagger-ui.html",
                 "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**", "/h2-console/**")
                 .permitAll()
-                .antMatchers(HttpMethod.POST, "/")
+                .antMatchers("/v1/auth/login", "/v1/auth/refresh-token")
+                .permitAll()
+                .antMatchers(HttpMethod.POST, "/v1")
                 .permitAll()
                 .anyRequest()
-                // todo 변경 필요
-                .permitAll();
+                .authenticated();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        final CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOriginPattern(WILD_CARD);
+        configuration.addAllowedHeader(WILD_CARD);
+        configuration.addAllowedMethod(WILD_CARD);
+        configuration.setAllowCredentials(true);
+
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration(WILD_PATTERN, configuration);
+        return source;
     }
 
 }

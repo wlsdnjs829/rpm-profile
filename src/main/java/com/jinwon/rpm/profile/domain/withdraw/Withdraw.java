@@ -1,32 +1,30 @@
 package com.jinwon.rpm.profile.domain.withdraw;
 
 import com.jinwon.rpm.profile.constants.RegexPattern;
-import com.jinwon.rpm.profile.constants.enums.WithdrawType;
 import com.jinwon.rpm.profile.infra.converter.EncryptConverter;
 import com.jinwon.rpm.profile.model.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 회원 탈퇴 Entity
+ * 사용자 탈퇴 Entity
  */
-@Table(indexes = {
-        @Index(name = "withdraw_index_001", columnList = "email"),
-        @Index(name = "withdraw_index_002", columnList = "type")
-})
+@Table(indexes = {@Index(name = "withdraw_index_001", columnList = "email")})
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -45,12 +43,21 @@ public class Withdraw extends BaseEntity {
     @Pattern(regexp = RegexPattern.NAME_REGEX)
     private String name;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private WithdrawType type;
+    @OneToMany(mappedBy = "withdraw", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<WithdrawReason> withdrawReasons = new ArrayList<>();
 
     @Column
     private String reason;
+
+    /**
+     * 탈퇴 사유 등록
+     *
+     * @param withdrawReason 탈퇴 사유
+     */
+    public void registration(WithdrawReason withdrawReason) {
+        this.withdrawReasons.add(withdrawReason);
+        withdrawReason.registration(this);
+    }
 
 }
 

@@ -1,7 +1,8 @@
 package com.jinwon.rpm.profile.domain.role;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jinwon.rpm.profile.constants.enums.RoleType;
-import com.jinwon.rpm.profile.domain.profile.Profile;
+import com.jinwon.rpm.profile.domain.member.Member;
 import com.jinwon.rpm.profile.model.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,8 +27,8 @@ import javax.persistence.UniqueConstraint;
  */
 @Table(uniqueConstraints = {
         @UniqueConstraint(
-                name = "profile_role_type_unique_001",
-                columnNames = {"profile_id", "roleType"}
+                name = "member_role_type_unique_001",
+                columnNames = {"member_id", "roleType"}
         )
 })
 @Getter
@@ -39,9 +40,10 @@ public class Role extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roleId;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id", nullable = false, foreignKey = @ForeignKey(name = "role_profile_foreign_key_001"))
-    private Profile profile;
+    @JoinColumn(name = "member_id", nullable = false, foreignKey = @ForeignKey(name = "role_member_foreign_key_001"))
+    private Member member;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -51,8 +53,8 @@ public class Role extends BaseEntity {
         this.roleType = roleType;
     }
 
-    public void grant(Profile profile) {
-        this.profile = profile;
+    public void grant(Member member) {
+        this.member = member;
     }
 
 }
