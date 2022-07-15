@@ -7,20 +7,25 @@ import com.jinwon.rpm.profile.constants.enums.UseType;
 import com.jinwon.rpm.profile.domain.attach_file.MemberAttachFile;
 import com.jinwon.rpm.profile.domain.attach_file.MemberAttachFileService;
 import com.jinwon.rpm.profile.domain.attach_file.inner_dto.MemberAttachFileDto;
+import com.jinwon.rpm.profile.domain.mail.inner_dto.CertInfoDto;
 import com.jinwon.rpm.profile.domain.member.dto.CommonMemberDto;
 import com.jinwon.rpm.profile.domain.member.dto.DeleteMemberDto;
 import com.jinwon.rpm.profile.domain.member.dto.MemberDto;
 import com.jinwon.rpm.profile.domain.member.dto.PostMemberDto;
 import com.jinwon.rpm.profile.domain.member.dto.UpdateMemberPasswordDto;
+import com.jinwon.rpm.profile.domain.member.dto.UpdateSubEmailDto;
 import com.jinwon.rpm.profile.domain.role.Role;
 import com.jinwon.rpm.profile.domain.terms_agreement.TermsAgreementService;
 import com.jinwon.rpm.profile.domain.terms_agreement.dto.TermsAgreementDetailDto;
 import com.jinwon.rpm.profile.domain.terms_agreement.inner_dto.TermsAgreementDto;
 import com.jinwon.rpm.profile.domain.withdraw.WithdrawService;
 import com.jinwon.rpm.profile.domain.withdraw.inner_dto.PostWithdrawReasonDto;
+import com.jinwon.rpm.profile.infra.component.RedisComponent;
 import com.jinwon.rpm.profile.infra.exception.CustomException;
 import com.jinwon.rpm.profile.infra.utils.PasswordEncryptUtil;
+import com.jinwon.rpm.profile.model.MemberInfoDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +39,6 @@ import java.util.function.Supplier;
  * 사용자 서비스
  */
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class MemberService {
 
@@ -44,11 +48,14 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    private final RedisComponent redisComponent;
+
     /**
      * 사용자 조회
      *
      * @param memberId 사용자 ID
      */
+    @Transactional
     public MemberDto getMember(Long memberId) {
         final Supplier<CustomException> exceptionSupplier = () -> new CustomException(ErrorMessage.NOT_EXIST_MEMBER);
 
@@ -65,6 +72,7 @@ public class MemberService {
      * @param postMemberDto 사용자 생성 객체
      * @return 생성된 사용자 정보
      */
+    @Transactional
     public MemberDto postMember(PostMemberDto postMemberDto) {
         Assert.notNull(postMemberDto, ErrorMessage.INVALID_PARAM.name());
 
@@ -81,13 +89,26 @@ public class MemberService {
 
     /* 유효한 사용자 생성 */
     private Member createValidMember(PostMemberDto postMemberDto) {
+        final String code = postMemberDto.getCode();
+        final String mail = redisComponent.getCertMailThrowIfInvalid(code);
+
+        postMemberDto.userEssentialInfo(mail);
         postMemberDto.validation();
 
         final String email = postMemberDto.getEmail();
-        final Optional<Member> existMember = memberRepository.findByEmail(email);
-        Assert.isTrue(existMember.isEmpty(), ErrorMessage.EXIST_EMAIL.name());
+        validEmailThrowIfExist(email);
 
         return postMemberDto.toEntity();
+    }
+
+    /**
+     * 이메일 유효성 체크, 존재 하면 예외 처리
+     *
+     * @param email 이메일
+     */
+    public void validEmailThrowIfExist(String email) {
+        final Optional<Member> existMember = memberRepository.findByEmail(email);
+        Assert.isTrue(existMember.isEmpty(), ErrorMessage.EXIST_EMAIL.name());
     }
 
     /**
@@ -96,6 +117,7 @@ public class MemberService {
      * @param commonMemberDto 공통 사용자 부분 수정 DTO
      * @return 수정된 사용자 정보
      */
+    @Transactional
     public MemberDto patchMember(CommonMemberDto commonMemberDto) {
         Assert.notNull(commonMemberDto, ErrorMessage.INVALID_PARAM.name());
 
@@ -112,6 +134,7 @@ public class MemberService {
      * @param commonMemberDto 공통 사용자 전체 수정 DTO
      * @return 수정된 사용자 정보
      */
+    @Transactional
     public MemberDto putMember(CommonMemberDto commonMemberDto) {
         Assert.notNull(commonMemberDto, ErrorMessage.INVALID_PARAM.name());
 
@@ -134,6 +157,7 @@ public class MemberService {
      * @param updateMemberPasswordDto 사용자 패스워드 수정 DTO
      * @return 수정된 사용자 정보
      */
+    @Transactional
     public MemberDto patchMemberPassword(UpdateMemberPasswordDto updateMemberPasswordDto) {
         Assert.notNull(updateMemberPasswordDto, ErrorMessage.INVALID_PARAM.name());
 
@@ -159,6 +183,7 @@ public class MemberService {
      * @param deleteMemberDto 사용자 삭제 DTO
      * @return 사용자 탈퇴 사유
      */
+    @Transactional
     public PostWithdrawReasonDto deleteMember(DeleteMemberDto deleteMemberDto) {
         Assert.notNull(deleteMemberDto, ErrorMessage.INVALID_PARAM.name());
 
@@ -196,6 +221,7 @@ public class MemberService {
      * @param agreeType 동의 타입
      * @return 동의한 사용자 DTO
      */
+    @Transactional
     public TermsAgreementDetailDto putMarketingAgreement(Long memberId, UseType agreeType) {
         Assert.notNull(memberId, ErrorMessage.INVALID_PARAM.name());
         Assert.notNull(agreeType, ErrorMessage.INVALID_PARAM.name());
@@ -214,6 +240,7 @@ public class MemberService {
      * @param multipartFile 첨부 파일
      * @return 첨부한 파일 정보
      */
+    @Transactional
     public MemberAttachFileDto uploadMemberFile(Long memberId, MultipartFile multipartFile) {
         Assert.notNull(memberId, ErrorMessage.INVALID_PARAM.name());
         Assert.notNull(multipartFile, ErrorMessage.INVALID_PARAM.name());
@@ -247,5 +274,36 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_EXIST_ATTACH_FILE));
     }
 
-}
+    /**
+     * 보조 이메일 변경
+     *
+     * @param memberInfoDto     사용자 정보 객체
+     * @param updateSubEmailDto 보조 이메일 변경 객체
+     * @return 사용자 객체
+     */
+    @Transactional
+    public MemberDto patchSubEmail(MemberInfoDto memberInfoDto, UpdateSubEmailDto updateSubEmailDto) {
+        Assert.notNull(memberInfoDto, ErrorMessage.INVALID_PARAM.name());
+        Assert.notNull(updateSubEmailDto, ErrorMessage.INVALID_PARAM.name());
 
+        final Long memberId = memberInfoDto.memberId();
+        final Member member = getMemberThrowIfNull(memberId);
+
+        final String accessToken = memberInfoDto.accessToken();
+        final CertInfoDto certInfoDto = redisComponent.getChangeMailInfo(accessToken)
+                .orElseThrow(() -> new CustomException(ErrorMessage.INVALID_CERT_CODE));
+
+        final String subEmail = updateSubEmailDto.subEmail();
+        final String code = updateSubEmailDto.code();
+
+        final String certEmail = certInfoDto.email();
+        final String certCode = certInfoDto.code();
+
+        Assert.isTrue(StringUtils.equals(subEmail, certEmail), ErrorMessage.INVALID_EMAIL.name());
+        Assert.isTrue(StringUtils.equals(code, certCode), ErrorMessage.INVALID_CERT_CODE.name());
+
+        final Member patchMember = member.patch(updateSubEmailDto);
+        return MemberDto.of(patchMember);
+    }
+
+}

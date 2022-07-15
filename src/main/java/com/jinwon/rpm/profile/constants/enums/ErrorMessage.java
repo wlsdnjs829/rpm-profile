@@ -21,14 +21,16 @@ public enum ErrorMessage {
     INVALID_EMAIL(HttpStatus.BAD_REQUEST, "적합하지 않은 이메일"),
     INVALID_PARAM(HttpStatus.BAD_REQUEST, "적합하지 않은 파라미터"),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "적합하지 않은 패스워드"),
+    INVALID_CERT_CODE(HttpStatus.BAD_REQUEST, "적합하지 않은 인증 코드"),
     INVALID_TERMS_TYPE(HttpStatus.BAD_REQUEST, "적합하지 않은 약관 타입"),
-
     INVALID_SUPPLIER(HttpStatus.INTERNAL_SERVER_ERROR, "SUPPLIER 오류"),
+    INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "적합하지 않은 파일 확장자명"),
 
     DISABLE_MEMBER(HttpStatus.FORBIDDEN, "비활성화된 사용자"),
     LOCKED_MEMBER(HttpStatus.FORBIDDEN, "잠겨 있는 사용자"),
 
     FAIL_PARSING(HttpStatus.INTERNAL_SERVER_ERROR, "파싱 실패"),
+    FAIL_SEND_MAIL(HttpStatus.INTERNAL_SERVER_ERROR, "메일 발송 실패"),
     FAIL_S3_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드 실패"),
     FAIL_S3_DOWNLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "파일 다운로드 실패"),
     FAIL_POST_WITHDRAW(HttpStatus.INTERNAL_SERVER_ERROR, "사용자 탈퇴 사유 생성 실패"),

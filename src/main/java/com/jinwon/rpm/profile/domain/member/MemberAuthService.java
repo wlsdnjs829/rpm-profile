@@ -4,7 +4,7 @@ import com.jinwon.rpm.profile.constants.enums.ErrorMessage;
 import com.jinwon.rpm.profile.domain.member.dto.JwtTokenDto;
 import com.jinwon.rpm.profile.domain.member.dto.LoginDto;
 import com.jinwon.rpm.profile.infra.component.EventPublisherComponent;
-import com.jinwon.rpm.profile.infra.component.TokenRedisComponent;
+import com.jinwon.rpm.profile.infra.component.RedisComponent;
 import com.jinwon.rpm.profile.infra.config.jwt.JwtTokenProvider;
 import com.jinwon.rpm.profile.infra.config.security.CustomUserDetailService;
 import com.jinwon.rpm.profile.infra.exception.CustomException;
@@ -25,7 +25,7 @@ public class MemberAuthService {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    private final TokenRedisComponent tokenRedisComponent;
+    private final RedisComponent redisComponent;
     private final EventPublisherComponent eventPublisherComponent;
 
     /**
@@ -57,10 +57,10 @@ public class MemberAuthService {
 
         deleteAccessTokenThrowIfInvalid(expiredAccessToken);
 
-        final Member refreshMember = tokenRedisComponent.getTokenMember(expiredRefreshToken)
+        final Member refreshMember = redisComponent.getTokenMember(expiredRefreshToken)
                 .orElseThrow(() -> new CustomException(ErrorMessage.JWT_EXPIRED_REFRESH_TOKEN));
 
-        tokenRedisComponent.deleteValues(expiredRefreshToken);
+        redisComponent.deleteValues(expiredRefreshToken);
 
         final Member member = addMemberInfo(refreshMember, clientIp);
 
@@ -74,7 +74,7 @@ public class MemberAuthService {
         final boolean validateToken = jwtTokenProvider.validateToken(expiredAccessToken);
         AssertUtil.isFalse(validateToken, ErrorMessage.JWT_NON_EXPIRED.name());
 
-        tokenRedisComponent.deleteValues(expiredAccessToken);
+        redisComponent.deleteValues(expiredAccessToken);
     }
 
     /* 사용자 추가 정보 저장 */
@@ -86,8 +86,8 @@ public class MemberAuthService {
                 .refreshToken(refreshToken)
                 .clientIp(clientIp);
 
-        tokenRedisComponent.addAccessToken(token, loginMember);
-        tokenRedisComponent.addRefreshToken(refreshToken, loginMember);
+        redisComponent.addAccessToken(token, loginMember);
+        redisComponent.addRefreshToken(refreshToken, loginMember);
         return member;
     }
 
@@ -103,7 +103,7 @@ public class MemberAuthService {
 
         final String accessToken = member.getAccessToken();
         final String refreshToken = member.getRefreshToken();
-        return tokenRedisComponent.deleteValues(accessToken) && tokenRedisComponent.deleteValues(refreshToken);
+        return redisComponent.deleteValues(accessToken) && redisComponent.deleteValues(refreshToken);
     }
 
 }

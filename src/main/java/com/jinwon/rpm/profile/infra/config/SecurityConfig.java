@@ -1,6 +1,6 @@
 package com.jinwon.rpm.profile.infra.config;
 
-import com.jinwon.rpm.profile.infra.component.TokenRedisComponent;
+import com.jinwon.rpm.profile.infra.component.RedisComponent;
 import com.jinwon.rpm.profile.infra.config.jwt.JwtAuthenticationFilter;
 import com.jinwon.rpm.profile.infra.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final TokenRedisComponent tokenRedisComponent;
+    private final RedisComponent redisComponent;
 
     private static final String WILD_CARD = "*";
     private static final String WILD_PATTERN = "/**";
@@ -46,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
                 .addFilterBefore(
-                        new JwtAuthenticationFilter(jwtTokenProvider, tokenRedisComponent),
+                        new JwtAuthenticationFilter(jwtTokenProvider, redisComponent),
                         UsernamePasswordAuthenticationFilter.class);
     }
 

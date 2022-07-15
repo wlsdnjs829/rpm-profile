@@ -1,7 +1,7 @@
 package com.jinwon.rpm.profile.infra.config.jwt;
 
 import com.jinwon.rpm.profile.domain.member.Member;
-import com.jinwon.rpm.profile.infra.component.TokenRedisComponent;
+import com.jinwon.rpm.profile.infra.component.RedisComponent;
 import com.jinwon.rpm.profile.infra.utils.NetworkUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,14 +24,14 @@ import java.util.Optional;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider tokenProvider;
-    private final TokenRedisComponent tokenRedisComponent;
+    private final RedisComponent redisComponent;
 
     private static final String JWT_PREFIX = "Bearer ";
     private static final String X_AUTH_TOKEN = "X-AUTH-TOKEN";
 
-    public JwtAuthenticationFilter(JwtTokenProvider tokenProvider, TokenRedisComponent tokenRedisComponent) {
+    public JwtAuthenticationFilter(JwtTokenProvider tokenProvider, RedisComponent redisComponent) {
         this.tokenProvider = tokenProvider;
-        this.tokenRedisComponent = tokenRedisComponent;
+        this.redisComponent = redisComponent;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return Optional.empty();
         }
 
-        final Optional<Member> userOp = tokenRedisComponent.getTokenMember(jwt);
+        final Optional<Member> userOp = redisComponent.getTokenMember(jwt);
 
         if (userOp.isEmpty()) {
             return Optional.empty();

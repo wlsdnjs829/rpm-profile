@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.midasit.rpm.member.domain.terms.QTerms.terms;
+import static com.jinwon.rpm.profile.domain.terms.QTerms.terms;
 
 /**
  * 약관 RepositoryImpl

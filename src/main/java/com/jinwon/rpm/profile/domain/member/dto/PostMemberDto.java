@@ -20,6 +20,10 @@ import java.util.List;
 public class PostMemberDto extends CommonPasswordDto {
 
     @NotNull
+    @Schema(description = "인증 코드", required = true, example = "b3dfe5effs8efs3m4vds9emw")
+    private String code;
+
+    @NotNull
     @Pattern(regexp = RegexPattern.NAME_REGEX)
     @Schema(description = "이름", required = true, example = "이진원")
     private String name;
