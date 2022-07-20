@@ -2,6 +2,7 @@ package com.jinwon.rpm.profile.infra.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -41,6 +42,7 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
+                .specVersion(SpecVersion.V31)
                 .components(new Components().addSecuritySchemes(X_AUTH_TOKEN, getSecurityScheme()))
                 .security(List.of(getSecurityRequirement()))
                 .info(new Info().title(API_NAME)
