@@ -7,6 +7,7 @@ buildscript {
 plugins {
     id 'org.springframework.boot' version '2.6.8'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'jacoco'
     id 'java'
 }
 
@@ -96,4 +97,20 @@ tasks.named('test') {
 
 compileJava {
     delete(file("$projectDir/build/generated"))
+}
+
+jacocoTestReport {
+    afterEvaluate {
+        classDirectories.from = files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: [
+                            "**/Q*",
+                            "com/midasit/rpm/member/infra/**/*Config.*",
+                            "com/midasit/rpm/member/infra/**/*Exception.*",
+                            "com/midasit/rpm/member/infra/**/*Component.*",
+                            "com/midasit/rpm/member/infra/**/*Handler.*",
+                            "com/midasit/rpm/member/model/*",
+                    ])
+        })
+    }
 }

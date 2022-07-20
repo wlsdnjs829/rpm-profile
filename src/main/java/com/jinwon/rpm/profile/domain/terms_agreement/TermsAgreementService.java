@@ -64,7 +64,7 @@ public class TermsAgreementService {
         final UseType agreeType = termsAgreementOp.map(TermsAgreement::getAgreeType)
                 .orElse(UseType.UNUSED);
 
-        final LocalDateTime agreeDateTime = termsAgreementOp.map(TermsAgreement::getLastModifiedDate)
+        final LocalDateTime agreeDateTime = termsAgreementOp.map(TermsAgreement::getLastModifiedDateTime)
                 .orElse(null);
 
         return new TermsAgreementDetailDto(termsDetailDto, agreeType, agreeDateTime);
