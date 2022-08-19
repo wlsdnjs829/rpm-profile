@@ -1,9 +1,12 @@
-<mxfile host="app.diagrams.net" modified="2022-08-19T03:06:40.648Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36" etag="VAOckGHQACMaS5VF8tiu" version="20.2.5" type="github">
+<mxfile host="app.diagrams.net" modified="2022-08-19T03:08:11.660Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36" etag="DWLjae8GedJzcJjGde1F" version="20.2.5" type="github">
   <diagram id="CEDhhPOFZJCGy8is60iT" name="페이지-1">
     <mxGraphModel dx="3773" dy="2772" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="Dzdg2uz1OPXHUZHbZTjD-177" value="" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Tahoma;fontSize=16;fontColor=#000000;strokeColor=none;strokeWidth=4;fillColor=default;" vertex="1" parent="1">
+          <mxGeometry x="-650" y="-1150" width="2060" height="2360" as="geometry" />
+        </mxCell>
         <mxCell id="Dzdg2uz1OPXHUZHbZTjD-116" value="&lt;h2&gt;현 스프린트 기준 통신 플로우&lt;/h2&gt;" style="rounded=1;whiteSpace=wrap;fillColor=none;strokeWidth=4;strokeColor=#6600CC;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fontFamily=Tahoma;html=1;fontStyle=1" vertex="1" parent="1">
           <mxGeometry x="-486.75" y="532" width="1730" height="590" as="geometry" />
         </mxCell>
